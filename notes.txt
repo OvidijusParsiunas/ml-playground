@@ -1,3 +1,4 @@
+remove the use of react-data-table-component if using a custom table
 routing may not be necessary if there will only be one type of predictions
 
 tsconfig.node.json - used by vite to run in node
