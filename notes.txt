@@ -1,2 +1,6 @@
+routing may not be necessary if there will only be one type of predictions
+
 tsconfig.node.json - used by vite to run in node
 https://stackoverflow.com/questions/72027949/why-does-vite-create-two-typescript-config-files-tsconfig-json-and-tsconfig-nod
+
+consider bringing visualization - e.g. @tensorflow/tfjs-vis later
