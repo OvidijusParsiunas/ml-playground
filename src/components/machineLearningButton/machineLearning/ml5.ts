@@ -1,70 +1,64 @@
+import { TableData } from '../../../shared/types/tableData';
+import { ML5DataRow } from '../../../shared/types/ml5';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare let ml5: any;
 
 // regression and classification based problems
 export class ML5 {
-  // Step 1: load data or create some data
-  private static readonly data = [
-    { r: 255, g: 0, b: 0, color: 'red-ish' },
-    { r: 254, g: 0, b: 0, color: 'red-ish' },
-    { r: 253, g: 0, b: 0, color: 'red-ish' },
-    { r: 0, g: 255, b: 0, color: 'green-ish' },
-    { r: 0, g: 254, b: 0, color: 'green-ish' },
-    { r: 0, g: 253, b: 0, color: 'green-ish' },
-    { r: 0, g: 0, b: 255, color: 'blue-ish' },
-    { r: 0, g: 0, b: 254, color: 'blue-ish' },
-    { r: 0, g: 0, b: 253, color: 'blue-ish' },
-  ];
+  public static addData(data: TableData, nn: { addData: (input: ML5DataRow, output: ML5DataRow) => void }): void {
+    const nameOfItemToPredict = data.header[data.header.length - 1];
+    const predictionItemIndex = data.header.length - 1;
+    data.data.forEach((dataRow: string[]) => {
+      const input: ML5DataRow = {};
+      data.header.forEach((headerCell: string, index: number) => {
+        if (index < data.header.length - 1) {
+          input[headerCell] = dataRow[index];
+        }
+      });
+      const output = { [nameOfItemToPredict]: dataRow[predictionItemIndex] };
+      nn.addData(input, output);
+    });
+  }
 
-  public static run() {
-    // Step 2: set your neural network options
+  public static run(data: TableData): void {
+    // set your neural network options
     const options = {
       task: 'classification',
     };
 
-    // Step 3: initialize your neural network
+    // initialize your neural network
     const nn = ml5.neuralNetwork(options);
 
-    // Step 4: add data to the neural network
-    ML5.data.forEach((item) => {
-      const inputs = {
-        r: item.r,
-        g: item.g,
-        b: item.b,
-      };
-      const output = {
-        color: item.color,
-      };
+    // add data to the neural network
+    ML5.addData(data, nn);
 
-      nn.addData(inputs, output);
-    });
-
-    // Step 5: normalize your data;
+    // normalize your data;
     nn.normalizeData();
 
-    // Step 6: train your neural network
+    // train your neural network
     const trainingOptions = {
       epochs: 32,
       batchSize: 12,
     };
     nn.train(trainingOptions, finishedTraining);
 
-    // Step 7: use the trained model
+    // use the trained model
     function finishedTraining() {
       classify();
     }
 
-    // Step 8: make a classification
+    // make a classification
     function classify() {
       const input = {
-        r: 255,
-        g: 0,
-        b: 0,
+        R: '255',
+        G: '0',
+        B: '0',
       };
       nn.classify(input, handleResults);
     }
 
-    // Step 9: define a function to handle the results of your classification
+    // define a function to handle the results of your classification
     function handleResults(error: Error, result: string) {
       if (error) {
         console.error(error);

@@ -1,4 +1,4 @@
-import TrainButton from '../components/predictButton/TrainButton';
+import TrainButton from '../components/trainButton/TrainButton';
 import TrainTable from '../components/trainTable/TrainTable';
 import './train.css';
 

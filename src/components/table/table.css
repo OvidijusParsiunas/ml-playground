@@ -1,0 +1,32 @@
+#header {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+#data {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.row {
+  display: flex;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: rgba(0, 0, 0, 0.12);
+  min-height: 48px;
+}
+
+#data > div:last-child {
+  border-bottom-width: 0px;
+}
+
+.row > div {
+  display: flex;
+  min-width: 100px;
+  align-items: center;
+  padding-left: 16px;
+  padding-right: 16px;
+  box-sizing: border-box;
+}
