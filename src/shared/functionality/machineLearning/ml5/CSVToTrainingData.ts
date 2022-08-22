@@ -6,7 +6,6 @@ export class CSVToTrainingData {
     const ml5Data: ML5Data = [];
     const CSVHeaderRow = CSVData[0];
     const CSVDataRows = CSVData.slice(1);
-    // TO-DO - use map
     CSVDataRows.forEach((dataRow: string[]) => {
       const ml5DataRow: ML5DataRow = {};
       CSVHeaderRow.forEach((headerCell: string, index: number) => {

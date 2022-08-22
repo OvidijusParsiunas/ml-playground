@@ -12,7 +12,6 @@ export class CSVDataToReactTableData {
 
   private static getData(CSVHeaderRow: CSVDataRow, CSVDataRows: CSVData): ReactTableData {
     const data: ReactTableData = [];
-    // TO-DO - use map
     CSVDataRows.forEach((dataRow: string[]) => {
       const tableDataRow: ReactTableRow = {};
       CSVHeaderRow.forEach((headerCell: string, index: number) => {

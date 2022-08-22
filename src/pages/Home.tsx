@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import '../App.css';
+import './home.css';
 
 export default function Home() {
   return (
-    <div className="App">
+    <div id="home">
       <h1>Machine Learning</h1>
       <Link to="/ml">
         <button style={{ backgroundColor: '#6dffad' }}>Start</button>

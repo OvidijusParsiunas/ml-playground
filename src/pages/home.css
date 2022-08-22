@@ -1,15 +1,10 @@
-.column {
+#home {
   position: absolute;
   top: 50%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
-  width: 50vw;
-}
-
-#left-column {
+  margin: 0;
   left: 0;
-}
-
-#right-column {
   right: 0;
+  padding-bottom: 5%;
 }

@@ -3,7 +3,10 @@
   top: 50%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
-  width: 50vw;
+}
+
+.side-column {
+  width: calc(50vw - 40px);
 }
 
 #left-column {
@@ -11,5 +14,10 @@
 }
 
 #right-column {
+  right: 0;
+}
+
+#center-column {
+  left: 0;
   right: 0;
 }
