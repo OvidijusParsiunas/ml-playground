@@ -53,5 +53,5 @@ export default function TrainTable() {
     return <div></div>;
   };
 
-  return <div>{getTable()}</div>;
+  return <div style={{ width: 'fit-content', margin: 'auto' }}>{getTable()}</div>;
 }
