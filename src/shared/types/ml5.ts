@@ -18,3 +18,7 @@ export type ML5Model = {
   ) => void;
   classify: (input: ML5DataRow, resultHandler: (error: Error, result: ML5Result) => void) => void;
 };
+
+export interface ML5Library {
+  neuralNetwork: (options: { task: string }) => ML5Model;
+}

@@ -1,15 +1,15 @@
-import { ML5 } from '../machineLearningButton/machineLearning/ml5';
+import { ML5ModelWrapper } from '../../shared/functionality/machineLearning/ml5/ml5';
 import { setResult } from '../../state/result/actions';
 import { ML5Result } from '../../shared/types/ml5';
 import { useDispatch } from 'react-redux';
 import { store } from '../../state/store';
 
 interface Props {
-  modelClass: ML5;
+  modelWrapper: ML5ModelWrapper | null;
 }
 
 export default function PredictButton(props: Props) {
-  const { modelClass } = props;
+  const { modelWrapper } = props;
 
   const dispatch = useDispatch();
 
@@ -22,9 +22,8 @@ export default function PredictButton(props: Props) {
   };
 
   const triggerML = () => {
-    if (!modelClass.isTrained) return;
     const predictTable = store.getState().predictTable;
-    modelClass.predict(predictTable.data).then((result) => {
+    modelWrapper?.predict(predictTable.data).then((result) => {
       const highestResult = parseResult(result);
       dispatch(setResult(highestResult));
     });

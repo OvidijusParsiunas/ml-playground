@@ -1,24 +1,12 @@
-import { ML5DataRow, ML5Model, ML5Result } from '../../../shared/types/ml5';
-import { TableData } from '../../../shared/types/tableData';
+import { ML5DataRow, ML5Model, ML5Result } from '../../../types/ml5';
+import { TableData } from '../../../types/tableData';
 
-declare let ml5: {
-  neuralNetwork: (options: { task: string }) => ML5Model;
-};
+export abstract class ML5ModelWrapper {
+  protected abstract nn: ML5Model;
 
-// TO-DO - probably doesn't need to be a class anymore
-// regression and classification based problems
-export class ML5 {
-  private readonly options = {
-    task: 'classification',
-  };
-  private nn: ML5Model | null = null;
   public isTrained = false;
 
-  public create(): void {
-    this.nn = ml5.neuralNetwork(this.options);
-  }
-
-  private addData(data: TableData): void {
+  protected addData(data: TableData): void {
     const nameOfItemToPredict = data.header[data.header.length - 1];
     const predictionItemIndex = data.header.length - 1;
     data.data.forEach((dataRow: string[]) => {
