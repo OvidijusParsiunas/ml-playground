@@ -6,7 +6,7 @@ export type ML5Result = {
   confidence: number;
 }[];
 
-export type ML5Model = {
+export type ML5NeuralNet = {
   addData: (input: ML5DataRow, output: ML5DataRow) => void;
   normalizeData: () => void;
   train: (
@@ -20,5 +20,5 @@ export type ML5Model = {
 };
 
 export interface ML5Library {
-  neuralNetwork: (options: { task: string }) => ML5Model;
+  neuralNetwork: (options: { task: string }) => ML5NeuralNet;
 }

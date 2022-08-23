@@ -1,4 +1,4 @@
-import { ML5ModelWrapper } from '../../shared/functionality/machineLearning/ml5/ml5';
+import { ML5Model } from '../../shared/functionality/machineLearning/ml5/ml5Model';
 import { ModelActionTypes } from './consts';
 
 type SetModelAction = { type: ModelActionTypes.SET_MODEL; payload: { model: ModelState['model'] } };
@@ -6,5 +6,5 @@ type SetModelAction = { type: ModelActionTypes.SET_MODEL; payload: { model: Mode
 export type ModelAction = SetModelAction;
 
 export interface ModelState {
-  model: ML5ModelWrapper | null;
+  model: ML5Model | null;
 }

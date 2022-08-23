@@ -1,11 +1,11 @@
-import { ML5ModelWrapper } from '../../shared/functionality/machineLearning/ml5/ml5';
+import { ML5Model } from '../../shared/functionality/machineLearning/ml5/ml5Model';
 import { setResult } from '../../state/result/actions';
 import { ML5Result } from '../../shared/types/ml5';
 import { useDispatch } from 'react-redux';
 import { store } from '../../state/store';
 
 interface Props {
-  modelWrapper: ML5ModelWrapper | null;
+  modelWrapper: ML5Model | null;
 }
 
 export default function PredictButton(props: Props) {

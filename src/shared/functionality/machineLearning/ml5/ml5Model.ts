@@ -1,8 +1,10 @@
-import { ML5DataRow, ML5Model, ML5Result } from '../../../types/ml5';
+import { ML5DataRow, ML5NeuralNet, ML5Result } from '../../../types/ml5';
 import { TableData } from '../../../types/tableData';
 
-export abstract class ML5ModelWrapper {
-  protected abstract nn: ML5Model;
+// this servers as a wrapper for ml5 neural net api
+// core purpose is the boolean ability to check if the model is trained
+export abstract class ML5Model {
+  protected abstract nn: ML5NeuralNet;
 
   public isTrained = false;
 
