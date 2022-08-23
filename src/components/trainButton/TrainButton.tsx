@@ -1,10 +1,18 @@
 import { ML5 } from '../machineLearningButton/machineLearning/ml5';
 import { store } from '../../state/store';
 
-export default function TrainButton() {
+interface Props {
+  modelClass: ML5;
+}
+
+export default function TrainButton(props: Props) {
+  const { modelClass } = props;
+
   const triggerML = () => {
     const trainTable = store.getState().trainTable;
-    ML5.run(trainTable.data);
+    modelClass.train(trainTable.data).then(() => {
+      console.log('Training finished');
+    });
   };
 
   return (

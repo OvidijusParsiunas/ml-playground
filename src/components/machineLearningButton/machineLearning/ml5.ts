@@ -1,12 +1,24 @@
+import { ML5DataRow, ML5Model, ML5Result } from '../../../shared/types/ml5';
 import { TableData } from '../../../shared/types/tableData';
-import { ML5DataRow } from '../../../shared/types/ml5';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare let ml5: any;
+declare let ml5: {
+  neuralNetwork: (options: { task: string }) => ML5Model;
+};
 
+// TO-DO - probably doesn't need to be a class anymore
 // regression and classification based problems
 export class ML5 {
-  public static addData(data: TableData, nn: { addData: (input: ML5DataRow, output: ML5DataRow) => void }): void {
+  private readonly options = {
+    task: 'classification',
+  };
+  private nn: ML5Model | null = null;
+  public isTrained = false;
+
+  public create(): void {
+    this.nn = ml5.neuralNetwork(this.options);
+  }
+
+  private addData(data: TableData): void {
     const nameOfItemToPredict = data.header[data.header.length - 1];
     const predictionItemIndex = data.header.length - 1;
     data.data.forEach((dataRow: string[]) => {
@@ -17,54 +29,49 @@ export class ML5 {
         }
       });
       const output = { [nameOfItemToPredict]: dataRow[predictionItemIndex] };
-      nn.addData(input, output);
+      this.nn?.addData(input, output);
     });
   }
 
-  public static run(data: TableData): void {
-    // set your neural network options
-    const options = {
-      task: 'classification',
-    };
+  public async train(data: TableData): Promise<void> {
+    return new Promise((resolve) => {
+      // add data to the neural network
+      this.addData(data);
 
-    // initialize your neural network
-    const nn = ml5.neuralNetwork(options);
+      // normalize your data;
+      this.nn?.normalizeData();
 
-    // add data to the neural network
-    ML5.addData(data, nn);
-
-    // normalize your data;
-    nn.normalizeData();
-
-    // train your neural network
-    const trainingOptions = {
-      epochs: 32,
-      batchSize: 12,
-    };
-    nn.train(trainingOptions, finishedTraining);
-
-    // use the trained model
-    function finishedTraining() {
-      classify();
-    }
-
-    // make a classification
-    function classify() {
-      const input = {
-        R: '255',
-        G: '0',
-        B: '0',
+      // train your neural network
+      const trainingOptions = {
+        epochs: 32,
+        batchSize: 12,
       };
-      nn.classify(input, handleResults);
-    }
 
-    // define a function to handle the results of your classification
-    function handleResults(error: Error, result: string) {
-      if (error) {
-        console.error(error);
-        return;
+      this.nn?.train(trainingOptions, this.finishTraining.bind(this, resolve));
+    });
+  }
+
+  private finishTraining(resolve: () => void): void {
+    resolve();
+    this.isTrained = true;
+  }
+
+  public async predict(data: TableData): Promise<ML5Result> {
+    return new Promise((resolve) => {
+      const input: ML5DataRow = {};
+      data.header.forEach((headerCell: string, index: number) => {
+        input[headerCell] = data.data[0][index];
+      });
+      this.nn?.classify(input, handleResults);
+
+      // define a function to handle the results of your classification
+      function handleResults(error: Error, result: ML5Result) {
+        if (error) {
+          console.error(error);
+          return;
+        }
+        resolve(result);
       }
-      console.log(result); // {label: 'red', confidence: 0.8};
-    }
+    });
   }
 }
