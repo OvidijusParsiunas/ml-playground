@@ -1,2 +1,2 @@
-export type CSVData = CSVDataRow[];
-export type CSVDataRow = string[];
+export type CSVData = Row[];
+type Row = string[];

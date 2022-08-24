@@ -1,9 +1,10 @@
 import { ML5ModelFactory } from '../shared/functionality/machineLearning/ml5/ml5ModelFactory';
 import { ML5Model } from '../shared/functionality/machineLearning/ml5/ml5Model';
+import { PredictTableActionTypes } from '../state/predictTable/consts';
 import PredictButton from '../components/predictButton/PredictButton';
-import PredictTable from '../components/predictTable/PredictTable';
+import { TrainTableActionTypes } from '../state/trainTable/consts';
 import TrainButton from '../components/trainButton/TrainButton';
-import TrainTable from '../components/trainTable/TrainTable';
+import StatefulTable from '../components/table/StatefulTable';
 import Result from '../components/result/Result';
 import React, { useEffect } from 'react';
 import './full.css';
@@ -29,16 +30,24 @@ export default function Full() {
       <h1>Full</h1>
       <div className="container">
         <div className="content">
-          <TrainTable />
+          <StatefulTable
+            initialCSVDataPath="data/color.csv"
+            updateTableDispatchAction={`${TrainTableActionTypes.UPDATE_TABLE}`}
+            updateTableCellDispatchAction={`${TrainTableActionTypes.UPDATE_TABLE_CELL}`}
+          />
         </div>
         <div className="content">
-          <TrainButton modelWrapper={activeModel} />
+          <TrainButton model={activeModel} />
         </div>
         <div className="content">
-          <PredictTable />
+          <StatefulTable
+            initialCSVDataPath="data/predict.csv"
+            updateTableDispatchAction={`${PredictTableActionTypes.UPDATE_TABLE}`}
+            updateTableCellDispatchAction={`${PredictTableActionTypes.UPDATE_TABLE_CELL}`}
+          />
         </div>
         <div className="content">
-          <PredictButton modelWrapper={activeModel} />
+          <PredictButton model={activeModel} />
         </div>
         <div className="content">
           <Result />

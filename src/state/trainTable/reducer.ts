@@ -18,6 +18,12 @@ export const TrainTableReducer = (
     case TrainTableActionTypes.UPDATE_TABLE: {
       return { ...state, data: action.payload.data };
     }
+    case TrainTableActionTypes.UPDATE_TABLE_CELL: {
+      const { rowIndex, columnIndex, newText } = action.payload;
+      // TO-DO this will all be updated
+      state.data.data[rowIndex][columnIndex] = newText;
+      return { ...state };
+    }
     default:
       return state;
   }

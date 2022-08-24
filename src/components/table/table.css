@@ -22,11 +22,17 @@
   border-bottom-width: 0px;
 }
 
-.row > div {
+.cell {
   display: flex;
   min-width: 100px;
   align-items: center;
   padding-left: 16px;
   padding-right: 16px;
   box-sizing: border-box;
+}
+
+/* check if this is a good workaround for smaller devices */
+.cell:empty {
+  text-align: left;
+  line-height: 45px;
 }

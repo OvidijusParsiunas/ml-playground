@@ -2,15 +2,15 @@ import { ML5Model } from '../../shared/functionality/machineLearning/ml5/ml5Mode
 import { store } from '../../state/store';
 
 interface Props {
-  modelWrapper: ML5Model | null;
+  model: ML5Model | null;
 }
 
 export default function TrainButton(props: Props) {
-  const { modelWrapper } = props;
+  const { model } = props;
 
   const triggerML = () => {
     const trainTable = store.getState().trainTable;
-    modelWrapper?.train(trainTable.data).then(() => {
+    model?.train(trainTable.data).then(() => {
       console.log('Training finished');
     });
   };

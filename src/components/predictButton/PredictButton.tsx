@@ -5,11 +5,11 @@ import { useDispatch } from 'react-redux';
 import { store } from '../../state/store';
 
 interface Props {
-  modelWrapper: ML5Model | null;
+  model: ML5Model | null;
 }
 
 export default function PredictButton(props: Props) {
-  const { modelWrapper } = props;
+  const { model } = props;
 
   const dispatch = useDispatch();
 
@@ -23,7 +23,7 @@ export default function PredictButton(props: Props) {
 
   const triggerML = () => {
     const predictTable = store.getState().predictTable;
-    modelWrapper?.predict(predictTable.data).then((result) => {
+    model?.predict(predictTable.data).then((result) => {
       const highestResult = parseResult(result);
       dispatch(setResult(highestResult));
     });
