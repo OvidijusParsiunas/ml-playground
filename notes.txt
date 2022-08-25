@@ -1,3 +1,5 @@
+multi row prediction
+
 remove the use of react-data-table-component if using a custom table
 can lazy load a lot of components if it means that the app will be loaded quicker
 routing may not be necessary if there will only be one type of predictions

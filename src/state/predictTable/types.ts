@@ -1,9 +1,9 @@
-import { TableData } from '../../shared/types/tableData';
+import { JSONTable } from '../../shared/types/JSONTable';
 import { PredictTableActionTypes } from './consts';
 
 type UpdatePredictTableAction = {
   type: PredictTableActionTypes.UPDATE_TABLE;
-  payload: { data: PredictTableState['data'] };
+  payload: { table: PredictTableState['table'] };
 };
 
 type UpdatePrecitTableCellAction = {
@@ -14,5 +14,5 @@ type UpdatePrecitTableCellAction = {
 export type PredictTableAction = UpdatePredictTableAction | UpdatePrecitTableCellAction;
 
 export interface PredictTableState {
-  data: TableData;
+  table: JSONTable;
 }

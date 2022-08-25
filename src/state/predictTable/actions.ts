@@ -1,10 +1,10 @@
-import { TableData } from '../../shared/types/tableData';
+import { JSONTable } from '../../shared/types/JSONTable';
 import { PredictTableActionTypes } from './consts';
 import { PredictTableAction } from './types';
 
-export const updatePredictTable = (data: TableData): PredictTableAction => ({
+export const updatePredictTable = (table: JSONTable): PredictTableAction => ({
   type: PredictTableActionTypes.UPDATE_TABLE,
-  payload: { data },
+  payload: { table },
 });
 
 export const updateTrainTableCell = (rowIndex: number, columnIndex: number, newText: string): PredictTableAction => ({

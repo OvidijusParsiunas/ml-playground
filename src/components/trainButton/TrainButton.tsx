@@ -10,7 +10,7 @@ export default function TrainButton(props: Props) {
 
   const triggerML = () => {
     const trainTable = store.getState().trainTable;
-    model?.train(trainTable.data).then(() => {
+    model?.train(trainTable.table).then(() => {
       console.log('Training finished');
     });
   };

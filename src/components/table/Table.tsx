@@ -1,20 +1,17 @@
+import { TableContents, TableRow } from '../../shared/types/TableContents';
 import React from 'react';
 import './table.css';
 
-type Row = string[];
-
-export type TableContents = Row[];
-
 interface Props {
-  initialContents: TableContents;
+  initialContent: TableContents;
   tableUpdated?: (table: TableContents) => void;
   cellUpdated?: (rowIndex: number, columnIndex: number, newText: string) => void;
 }
 
 export default function Table(props: Props) {
-  const { initialContents, tableUpdated, cellUpdated } = props;
+  const { initialContent, tableUpdated, cellUpdated } = props;
 
-  const tableContents = React.useRef<TableContents>(initialContents);
+  const tableContents = React.useRef<TableContents>(JSON.parse(JSON.stringify(initialContent)));
 
   const getCellPosition = (className: string) => {
     const digitsRegex = /\d+/g;
@@ -28,8 +25,8 @@ export default function Table(props: Props) {
     const [rowIndex, columnIndex] = getCellPosition(className);
     tableContents.current[rowIndex][columnIndex] = cellText as string;
     if (tableUpdated) {
-      // this is to prevent the mutation of the object stored in store
-      // may not be efficient if updated frequently
+      // needs to be done for immutability
+      // may not be efficient if table has many rows and updated frequently
       tableUpdated(JSON.parse(JSON.stringify(tableContents.current)));
     }
     if (cellUpdated) {
@@ -37,7 +34,7 @@ export default function Table(props: Props) {
     }
   };
 
-  const generateCells = (dataRow: Row, rowIndex: number) => {
+  const generateCells = (dataRow: TableRow, rowIndex: number) => {
     return dataRow.map((cellName: string, columnIndex: number) => {
       return (
         <div
@@ -53,7 +50,7 @@ export default function Table(props: Props) {
     });
   };
 
-  const populateDataRow = (dataRow: Row, rowIndex: number): JSX.Element => {
+  const populateDataRow = (dataRow: TableRow, rowIndex: number): JSX.Element => {
     return (
       <div className="row" key={rowIndex}>
         {generateCells(dataRow, rowIndex)}
@@ -62,7 +59,7 @@ export default function Table(props: Props) {
   };
 
   const populateData = (data: TableContents): JSX.Element[] => {
-    return data.map((dataRows: Row, rowIndex: number) => populateDataRow(dataRows, rowIndex + 1));
+    return data.map((dataRows: TableRow, rowIndex: number) => populateDataRow(dataRows, rowIndex + 1));
   };
 
   return (

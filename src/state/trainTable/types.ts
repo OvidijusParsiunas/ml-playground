@@ -1,7 +1,7 @@
-import { TableData } from '../../shared/types/tableData';
+import { JSONTable } from '../../shared/types/JSONTable';
 import { TrainTableActionTypes } from './consts';
 
-type UpdateTrainTableAction = { type: TrainTableActionTypes.UPDATE_TABLE; payload: { data: TrainTableState['data'] } };
+type UpdateTrainTableAction = { type: TrainTableActionTypes.UPDATE_TABLE; payload: { table: TrainTableState['table'] } };
 
 type UpdateTrainTableCellAction = {
   type: TrainTableActionTypes.UPDATE_TABLE_CELL;
@@ -11,5 +11,5 @@ type UpdateTrainTableCellAction = {
 export type TrainTableAction = UpdateTrainTableAction | UpdateTrainTableCellAction;
 
 export interface TrainTableState {
-  data: TableData;
+  table: JSONTable;
 }

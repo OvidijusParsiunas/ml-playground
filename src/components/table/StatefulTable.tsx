@@ -1,14 +1,22 @@
+import {
+  UpdateTableCellActionsTypes,
+  UpdateTableActionsTypes,
+  UpdateTableCellAction,
+  UpdateTableAction,
+} from '../../state/shared/tableActions';
 import { CSVDataReader } from '../../shared/functionality/CSVDataReader';
+import { TableContents } from '../../shared/types/TableContents';
+import { JSONTable } from '../../shared/types/JSONTable';
 import { CSVData } from '../../shared/types/CSVData';
-import Table, { TableContents } from './Table';
 import { useDispatch } from 'react-redux';
 import { useEffect, useRef } from 'react';
 import { useState } from 'react';
+import Table from './Table';
 
 interface Props {
   initialCSVDataPath: string;
-  updateTableDispatchAction: string;
-  updateTableCellDispatchAction: string;
+  updateTableDispatchAction: UpdateTableActionsTypes;
+  updateTableCellDispatchAction: UpdateTableCellActionsTypes;
 }
 
 // https://codesandbox.io/s/editable-react-table-gchwp?fontsize=14&hidenavigation=1&theme=dark&file=/src/App.js
@@ -22,21 +30,26 @@ export default function StatefulTable(props: Props) {
   const initialTableContents = useRef<TableContents>([]);
   const forceRerender = useState<boolean>(false)[1];
 
-  const updateTableState = (table: TableContents) => {
-    // TO-DO data should be called table
+  const updateTableState = (arrayTable: TableContents) => {
     dispatch({
       type: updateTableDispatchAction,
-      payload: { data: { header: table[0], data: table.slice(1) } },
-    });
+      payload: { table: convertTableToJSON(arrayTable) },
+    } as UpdateTableAction);
+  };
+
+  const convertTableToJSON = (tableContents: TableContents): JSONTable => {
+    return tableContents.reduce(
+      (accumulator: JSONTable, v: string[], rowIndex: number) => ({ ...accumulator, [rowIndex]: v }),
+      {},
+    );
   };
 
   const udpateTableCellState = (rowIndex: number, columnIndex: number, newText: string) => {
-    // TO-DO data should be called table
     // TO-DO update only the area edited
     dispatch({
       type: updateTableCellDispatchAction,
       payload: { rowIndex, columnIndex, newText },
-    });
+    } as UpdateTableCellAction);
   };
 
   const populateTable = (CSVData: CSVData): void => {
@@ -62,7 +75,7 @@ export default function StatefulTable(props: Props) {
 
   const getTable = (): JSX.Element => {
     if (initialTableContents.current.length > 0) {
-      return <Table initialContents={initialTableContents.current} tableUpdated={updateTableState} />;
+      return <Table initialContent={initialTableContents.current} tableUpdated={updateTableState} />;
     }
     return <div></div>;
   };
