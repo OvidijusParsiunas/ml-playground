@@ -1,13 +1,12 @@
 import { PredictTableAction, PredictTableState } from './types';
+import { TrainTableState } from '../trainTable/types';
 import { PredictTableActionTypes } from './consts';
 
-const initialState: PredictTableState = {
-  table: {},
-};
+const initialState: TrainTableState = {};
 
 const initialAction: PredictTableAction = {
   type: PredictTableActionTypes.UPDATE_TABLE,
-  payload: { table: initialState.table },
+  payload: initialState,
 };
 
 export const PredictTableReducer = (
@@ -16,11 +15,11 @@ export const PredictTableReducer = (
 ): PredictTableState => {
   switch (action.type) {
     case PredictTableActionTypes.UPDATE_TABLE: {
-      return { ...state, table: action.payload.table };
+      return { ...action.payload };
     }
     case PredictTableActionTypes.UPDATE_TABLE_CELL: {
       const { rowIndex, columnIndex, newText } = action.payload;
-      const row = JSON.parse(JSON.stringify(state.table[rowIndex]));
+      const row = JSON.parse(JSON.stringify(state[rowIndex]));
       row[columnIndex] = newText;
       return { ...state, [rowIndex]: row };
     }

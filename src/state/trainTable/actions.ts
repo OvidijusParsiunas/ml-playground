@@ -4,7 +4,7 @@ import { TrainTableAction } from './types';
 
 export const updateTrainTable = (table: JSONTable): TrainTableAction => ({
   type: TrainTableActionTypes.UPDATE_TABLE,
-  payload: { table },
+  payload: table,
 });
 
 export const updateTrainTableCell = (rowIndex: number, columnIndex: number, newText: string): TrainTableAction => ({

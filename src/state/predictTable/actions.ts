@@ -4,7 +4,7 @@ import { PredictTableAction } from './types';
 
 export const updatePredictTable = (table: JSONTable): PredictTableAction => ({
   type: PredictTableActionTypes.UPDATE_TABLE,
-  payload: { table },
+  payload: table,
 });
 
 export const updateTrainTableCell = (rowIndex: number, columnIndex: number, newText: string): PredictTableAction => ({

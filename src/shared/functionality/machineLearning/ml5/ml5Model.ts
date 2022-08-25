@@ -12,7 +12,8 @@ export abstract class ML5Model {
   private static getML5DataRow(headerRow: TableRow, dataRow: TableRow): ML5DataRow {
     return headerRow.reduce((accumulator: ML5DataRow, headerCell: string, index: number) => {
       if (index < headerRow.length - 1) {
-        return { ...accumulator, [headerCell]: dataRow[index] };
+        // TO-DO need to figure out when to convert and when to use as a class
+        return { ...accumulator, [headerCell]: Number(dataRow[index]) };
       }
       return accumulator;
     }, {});
@@ -59,7 +60,8 @@ export abstract class ML5Model {
       const input: ML5DataRow = {};
       const headerRow = table[0];
       headerRow.forEach((headerCell: string, index: number) => {
-        input[headerCell] = table[1][index];
+        // TO-DO need to figure out when to convert and when to use as a class
+        input[headerCell] = Number(table[1][index]);
       });
       this.nn?.classify(input, handleResults);
 

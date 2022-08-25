@@ -33,7 +33,7 @@ export default function StatefulTable(props: Props) {
   const updateTableState = (arrayTable: TableContents) => {
     dispatch({
       type: updateTableDispatchAction,
-      payload: { table: convertTableToJSON(arrayTable) },
+      payload: convertTableToJSON(arrayTable),
     } as UpdateTableAction);
   };
 
@@ -44,8 +44,7 @@ export default function StatefulTable(props: Props) {
     );
   };
 
-  const udpateTableCellState = (rowIndex: number, columnIndex: number, newText: string) => {
-    // TO-DO update only the area edited
+  const updateTableCellState = (rowIndex: number, columnIndex: number, newText: string) => {
     dispatch({
       type: updateTableCellDispatchAction,
       payload: { rowIndex, columnIndex, newText },
@@ -75,7 +74,7 @@ export default function StatefulTable(props: Props) {
 
   const getTable = (): JSX.Element => {
     if (initialTableContents.current.length > 0) {
-      return <Table initialContent={initialTableContents.current} tableUpdated={updateTableState} />;
+      return <Table initialContent={initialTableContents.current} cellUpdated={updateTableCellState} />;
     }
     return <div></div>;
   };

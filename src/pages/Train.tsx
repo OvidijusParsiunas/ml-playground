@@ -11,8 +11,8 @@ export default function Train() {
         <div style={{ float: 'right', marginRight: '15%' }}>
           <StatefulTable
             initialCSVDataPath="data/color.csv"
-            updateTableDispatchAction={`${TrainTableActionTypes.UPDATE_TABLE}`}
-            updateTableCellDispatchAction={`${TrainTableActionTypes.UPDATE_TABLE_CELL}`}
+            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE}
+            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_CELL}
           />
         </div>
       </div>

@@ -10,7 +10,7 @@ export type UpdateTableCellActionsTypes =
 
 export type UpdateTableAction = {
   type: UpdateTableActionsTypes;
-  payload: { table: JSONTable };
+  payload: JSONTable;
 };
 
 export type UpdateTableCellAction = {

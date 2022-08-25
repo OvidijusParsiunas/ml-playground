@@ -13,13 +13,13 @@ import './full.css';
 export default function Full() {
   // the reason why these are not stored using Redux is because it is not best practice to store objects that contain
   // functions (classes or models), hence the better pattern is to store these in a parent component that uses them
-  const [models, setModels] = React.useState<ML5Model[]>([]);
+  // const [models, setModels] = React.useState<ML5Model[]>([]);
   const [activeModel, setActiveModel] = React.useState<ML5Model | null>(null);
 
   useEffect(() => {
     setTimeout(() => {
       const ml5ClassificationModel = ML5ModelFactory.createClassification();
-      setModels([ml5ClassificationModel]);
+      // setModels([ml5ClassificationModel]);
       setActiveModel(ml5ClassificationModel);
       // TO-DO - will be replaced by state that signals when ml5 is imported
     }, 500);

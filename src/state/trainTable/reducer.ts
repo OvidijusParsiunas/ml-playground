@@ -1,13 +1,12 @@
 import { TrainTableAction, TrainTableState } from './types';
+import { JSONTable } from '../../shared/types/JSONTable';
 import { TrainTableActionTypes } from './consts';
 
-const initialState: TrainTableState = {
-  table: {},
-};
+const initialState: JSONTable = {};
 
 const initialAction: TrainTableAction = {
   type: TrainTableActionTypes.UPDATE_TABLE,
-  payload: { table: initialState.table },
+  payload: initialState,
 };
 
 export const TrainTableReducer = (
@@ -16,12 +15,11 @@ export const TrainTableReducer = (
 ): TrainTableState => {
   switch (action.type) {
     case TrainTableActionTypes.UPDATE_TABLE: {
-      return { ...state, table: action.payload.table };
+      return { ...action.payload };
     }
     case TrainTableActionTypes.UPDATE_TABLE_CELL: {
       const { rowIndex, columnIndex, newText } = action.payload;
-      // TO-DO this will all be updated
-      const row = JSON.parse(JSON.stringify(state.table[rowIndex]));
+      const row = JSON.parse(JSON.stringify(state[rowIndex]));
       row[columnIndex] = newText;
       return { ...state, [rowIndex]: row };
     }

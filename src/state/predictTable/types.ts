@@ -3,7 +3,7 @@ import { PredictTableActionTypes } from './consts';
 
 type UpdatePredictTableAction = {
   type: PredictTableActionTypes.UPDATE_TABLE;
-  payload: { table: PredictTableState['table'] };
+  payload: PredictTableState;
 };
 
 type UpdatePrecitTableCellAction = {
@@ -13,6 +13,4 @@ type UpdatePrecitTableCellAction = {
 
 export type PredictTableAction = UpdatePredictTableAction | UpdatePrecitTableCellAction;
 
-export interface PredictTableState {
-  table: JSONTable;
-}
+export type PredictTableState = JSONTable;
