@@ -9,7 +9,7 @@ export abstract class ML5Model {
 
   public isTrained = false;
 
-  private getML5DataRow(table: JSONTable, headerRow: TableRow, dataRow: TableRow): ML5DataRow {
+  private static getML5DataRow(headerRow: TableRow, dataRow: TableRow): ML5DataRow {
     return headerRow.reduce((accumulator: ML5DataRow, headerCell: string, index: number) => {
       if (index < headerRow.length - 1) {
         return { ...accumulator, [headerCell]: dataRow[index] };
@@ -25,7 +25,7 @@ export abstract class ML5Model {
     Object.keys(table).forEach((rowIndex: string) => {
       if (Number(rowIndex) === 0) return;
       const dataRow = table[Number(rowIndex)];
-      const input = this.getML5DataRow(table, headerRow, dataRow);
+      const input = ML5Model.getML5DataRow(headerRow, dataRow);
       const output = { [nameOfItemToPredict]: dataRow[predictionItemIndex] };
       this.nn?.addData(input, output);
     });
