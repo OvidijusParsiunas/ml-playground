@@ -6,6 +6,15 @@ export type ML5Result = {
   confidence: number;
 }[];
 
+export enum NeuralNetworkTaskTypes {
+  CLASSIFICATION = 'classification',
+  REGRESSION = 'regression',
+}
+
+interface NeuralNetworkOptions {
+  task: NeuralNetworkTaskTypes;
+}
+
 export type ML5NeuralNet = {
   addData: (input: ML5DataRow, output: ML5DataRow) => void;
   normalizeData: () => void;
@@ -20,5 +29,5 @@ export type ML5NeuralNet = {
 };
 
 export interface ML5Library {
-  neuralNetwork: (options: { task: string }) => ML5NeuralNet;
+  neuralNetwork: (options: NeuralNetworkOptions) => ML5NeuralNet;
 }

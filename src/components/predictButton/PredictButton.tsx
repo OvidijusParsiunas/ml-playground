@@ -23,7 +23,8 @@ export default function PredictButton(props: Props) {
 
   const triggerML = () => {
     const predictTable = store.getState().predictTable;
-    model?.predict(predictTable).then((result) => {
+    const headers = store.getState().tableMetaData.headers;
+    model?.predict(predictTable, headers).then((result) => {
       const highestResult = parseResult(result);
       dispatch(setResult(highestResult));
     });

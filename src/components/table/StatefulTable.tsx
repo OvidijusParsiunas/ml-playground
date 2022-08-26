@@ -31,9 +31,10 @@ export default function StatefulTable(props: Props) {
   const forceRerender = useState<boolean>(false)[1];
 
   const updateTableState = (arrayTable: TableContents) => {
+    const JSONTable = convertTableToJSON(arrayTable);
     dispatch({
       type: updateTableDispatchAction,
-      payload: convertTableToJSON(arrayTable),
+      payload: JSONTable,
     } as UpdateTableAction);
   };
 

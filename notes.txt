@@ -1,3 +1,14 @@
+explore the csv to json function inside the model
+
+the headers of the prediction table cannot be ammended
+
+there is no trained model:
+prediction table headers should automatically update when
+
+when the trained model:
+prediction table headers will only update when the model has been retrained
+allowed input types of the prediction table should be what was normalized
+
 multi row prediction
 
 remove the use of react-data-table-component if using a custom table
