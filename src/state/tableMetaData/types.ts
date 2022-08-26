@@ -1,18 +1,23 @@
 import { JSONTableData } from '../../shared/types/JSONTableData';
-import { TableMetaDataActionTypes } from './consts';
 import { TableRow } from '../../shared/types/tableContents';
-
-type UpdateHeadersTypes = {
-  type: TableMetaDataActionTypes.UPDATE_HEADERS_TYPES;
-  payload: { trainTableData: JSONTableData };
-};
+import { TableMetaDataActionTypes } from './consts';
 
 type SetHeadersWithTextAction = {
   type: TableMetaDataActionTypes.SET_HEADERS_WITH_TEXT;
   payload: { headersRow: TableRow };
 };
 
-export type TableMetaDataAction = UpdateHeadersTypes | SetHeadersWithTextAction;
+type UpdateHeadersTypesAction = {
+  type: TableMetaDataActionTypes.UPDATE_HEADERS_TYPES;
+  payload: { trainTableData: JSONTableData };
+};
+
+type UpdateHeaderTextAction = {
+  type: TableMetaDataActionTypes.UPDATE_HEADER_TEXT;
+  payload: { columnIndex: number; newText: string };
+};
+
+export type TableMetaDataAction = SetHeadersWithTextAction | UpdateHeadersTypesAction | UpdateHeaderTextAction;
 
 export type HeaderColumnType = 'number' | 'string';
 

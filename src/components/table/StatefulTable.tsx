@@ -4,7 +4,7 @@ import {
   UpdateTableCellDataAction,
   UpdateTableDataAction,
 } from '../../state/shared/tableDataActions';
-import { setHeadersWithText } from '../../state/tableMetaData/actions';
+import { setHeadersWithText, updateHeaderText } from '../../state/tableMetaData/actions';
 import { TableContents, TableRow } from '../../shared/types/tableContents';
 import { CSVReader } from '../../shared/functionality/CSVReader';
 import { JSONTableData } from '../../shared/types/JSONTableData';
@@ -49,10 +49,14 @@ export default function StatefulTable(props: Props) {
   };
 
   const updateTableCellStore = (rowIndex: number, columnIndex: number, newText: string) => {
-    dispatch({
-      type: updateTableCellDispatchAction,
-      payload: { rowIndex, columnIndex, newText },
-    } as UpdateTableCellDataAction);
+    if (rowIndex === 0) {
+      dispatch(updateHeaderText(columnIndex, newText));
+    } else {
+      dispatch({
+        type: updateTableCellDispatchAction,
+        payload: { rowIndex, columnIndex, newText },
+      } as UpdateTableCellDataAction);
+    }
   };
 
   const populateTable = (CSV: CSV): void => {
