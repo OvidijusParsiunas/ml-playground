@@ -1,4 +1,0 @@
-export enum TrainTableActionTypes {
-  UPDATE_TABLE = 'UPDATE_TRAIN_TABLE',
-  UPDATE_TABLE_CELL = 'UPDATE_TRAIN_TABLE_CELL',
-}

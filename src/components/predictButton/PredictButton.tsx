@@ -22,9 +22,9 @@ export default function PredictButton(props: Props) {
   };
 
   const triggerML = () => {
-    const predictTable = store.getState().predictTable;
+    const predictTableData = store.getState().predictTableData;
     const headers = store.getState().tableMetaData.headers;
-    model?.predict(predictTable, headers).then((result) => {
+    model?.predict(predictTableData, headers).then((result) => {
       const highestResult = parseResult(result);
       dispatch(setResult(highestResult));
     });

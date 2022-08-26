@@ -1,68 +1,71 @@
 import {
-  UpdateTableCellActionsTypes,
-  UpdateTableActionsTypes,
-  UpdateTableCellAction,
-  UpdateTableAction,
-} from '../../state/shared/tableActions';
-import { CSVDataReader } from '../../shared/functionality/CSVDataReader';
-import { TableContents } from '../../shared/types/TableContents';
-import { JSONTable } from '../../shared/types/JSONTable';
-import { CSVData } from '../../shared/types/CSVData';
+  UpdateTableDataCellActionsTypes,
+  UpdateTableDataActionsTypes,
+  UpdateTableCellDataAction,
+  UpdateTableDataAction,
+} from '../../state/shared/tableDataActions';
+import { setHeadersWithText } from '../../state/tableMetaData/actions';
+import { TableContents, TableRow } from '../../shared/types/tableContents';
+import { CSVReader } from '../../shared/functionality/CSVReader';
+import { JSONTableData } from '../../shared/types/JSONTableData';
+import { CSV } from '../../shared/types/CSV';
 import { useDispatch } from 'react-redux';
 import { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import Table from './Table';
 
 interface Props {
-  initialCSVDataPath: string;
-  updateTableDispatchAction: UpdateTableActionsTypes;
-  updateTableCellDispatchAction: UpdateTableCellActionsTypes;
+  initialCSVPath: string;
+  isControllingHeaders?: boolean;
+  updateTableDispatchAction: UpdateTableDataActionsTypes;
+  updateTableCellDispatchAction: UpdateTableDataCellActionsTypes;
 }
 
 // https://codesandbox.io/s/editable-react-table-gchwp?fontsize=14&hidenavigation=1&theme=dark&file=/src/App.js
 // https://react-data-table-component.netlify.app/?path=/docs/getting-started-patterns--page
 // https://github.com/revolist/revogrid
 export default function StatefulTable(props: Props) {
-  const { initialCSVDataPath, updateTableDispatchAction, updateTableCellDispatchAction } = props;
+  const { initialCSVPath, isControllingHeaders, updateTableDispatchAction, updateTableCellDispatchAction } = props;
 
   const dispatch = useDispatch();
 
   const initialTableContents = useRef<TableContents>([]);
   const forceRerender = useState<boolean>(false)[1];
 
-  const updateTableState = (arrayTable: TableContents) => {
-    const JSONTable = convertTableToJSON(arrayTable);
+  const updateTableStores = (CSV: CSV) => {
+    const JSONTableData = convertTableToJSON(CSV.slice(1));
     dispatch({
       type: updateTableDispatchAction,
-      payload: JSONTable,
-    } as UpdateTableAction);
+      payload: JSONTableData,
+    } as UpdateTableDataAction);
+    if (isControllingHeaders) dispatch(setHeadersWithText(CSV[0]));
   };
 
-  const convertTableToJSON = (tableContents: TableContents): JSONTable => {
-    return tableContents.reduce(
-      (accumulator: JSONTable, v: string[], rowIndex: number) => ({ ...accumulator, [rowIndex]: v }),
+  const convertTableToJSON = (tableData: TableContents): JSONTableData => {
+    return tableData.reduce(
+      (accumulator: JSONTableData, row: TableRow, rowIndex: number) => ({ ...accumulator, [rowIndex]: row }),
       {},
     );
   };
 
-  const updateTableCellState = (rowIndex: number, columnIndex: number, newText: string) => {
+  const updateTableCellStore = (rowIndex: number, columnIndex: number, newText: string) => {
     dispatch({
       type: updateTableCellDispatchAction,
       payload: { rowIndex, columnIndex, newText },
-    } as UpdateTableCellAction);
+    } as UpdateTableCellDataAction);
   };
 
-  const populateTable = (CSVData: CSVData): void => {
-    initialTableContents.current = CSVData;
+  const populateTable = (CSV: CSV): void => {
+    initialTableContents.current = CSV;
     forceRerender(true);
   };
 
   const fetchAndProcessTrainCSV = (numberOfAttempts = 0): void => {
     if (numberOfAttempts > 3) return;
-    CSVDataReader.fetch(initialCSVDataPath).then((CSVData) => {
-      if (CSVData) {
-        populateTable(CSVData);
-        updateTableState(CSVData);
+    CSVReader.fetch(initialCSVPath).then((CSV) => {
+      if (CSV) {
+        populateTable(CSV);
+        updateTableStores(CSV);
       } else {
         fetchAndProcessTrainCSV(numberOfAttempts + 1);
       }
@@ -75,7 +78,7 @@ export default function StatefulTable(props: Props) {
 
   const getTable = (): JSX.Element => {
     if (initialTableContents.current.length > 0) {
-      return <Table initialContent={initialTableContents.current} cellUpdated={updateTableCellState} />;
+      return <Table initialContent={initialTableContents.current} cellUpdated={updateTableCellStore} />;
     }
     return <div></div>;
   };

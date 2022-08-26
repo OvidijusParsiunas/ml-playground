@@ -1,4 +1,4 @@
-import { TableContents, TableRow } from '../../shared/types/TableContents';
+import { TableContents, TableRow } from '../../shared/types/tableContents';
 import React from 'react';
 import './table.css';
 

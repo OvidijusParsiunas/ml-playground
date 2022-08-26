@@ -1,7 +1,7 @@
 import { ML5DataRow, ML5Library, ML5NeuralNet, ML5Result, NeuralNetworkTaskTypes } from '../../../types/ml5';
-import { HeaderColumnType, HeadersMetaData } from '../../../../state/tableMetaData/types';
-import { TableRow } from '../../../types/TableContents';
-import { JSONTable } from '../../../types/JSONTable';
+import { HeaderColumnType, HeaderMetaData, HeadersMetaData } from '../../../../state/tableMetaData/types';
+import { JSONTableData } from '../../../types/JSONTableData';
+import { TableRow } from '../../../types/tableContents';
 
 declare let ml5: ML5Library;
 
@@ -21,26 +21,23 @@ export abstract class ML5Model {
     return type === 'number' ? Number(inputText) : inputText;
   }
 
-  private static getML5DataRow(headerRow: TableRow, dataRow: TableRow, headers: HeadersMetaData): ML5DataRow {
-    return headerRow.reduce((accumulator: ML5DataRow, headerText: string, columnIndex: number) => {
-      if (columnIndex < headerRow.length - 1) {
-        const { text: headerText, type } = headers[columnIndex];
+  private static getML5InputRow(dataRow: TableRow, headers: Required<HeadersMetaData>): ML5DataRow {
+    return headers
+      .slice(0, headers.length - 1)
+      .reduce((accumulator: ML5DataRow, headerMetaData: HeaderMetaData, columnIndex: number) => {
+        const { text: headerText, type } = headerMetaData as Required<HeaderMetaData>;
         // TO-DO need to figure out when to convert and when to use as a class
         return { ...accumulator, [headerText]: ML5Model.getCellTextWithCorrectType(dataRow, type, columnIndex) };
-      }
-      return accumulator;
-    }, {});
+      }, {});
   }
 
-  protected addData(table: JSONTable, headers: HeadersMetaData): void {
-    const headerRow = table[0];
-    const predictionItemIndex = headerRow.length - 1;
-    const nameOfItemToPredict = headerRow[predictionItemIndex];
-    Object.keys(table).forEach((rowIndex: string) => {
-      if (Number(rowIndex) === 0) return;
-      const dataRow = table[Number(rowIndex)];
-      const input = ML5Model.getML5DataRow(headerRow, dataRow, headers);
-      const output = { [nameOfItemToPredict]: dataRow[predictionItemIndex] };
+  protected addData(data: JSONTableData, headers: HeadersMetaData): void {
+    const predictionItemIndex = headers.length - 1;
+    const nameOfItemToPredict = headers[predictionItemIndex];
+    Object.keys(data).forEach((rowIndex: string) => {
+      const dataRow = data[Number(rowIndex)];
+      const input = ML5Model.getML5InputRow(dataRow, headers);
+      const output = { [nameOfItemToPredict.text]: dataRow[predictionItemIndex] };
       this.nn?.addData(input, output);
     });
   }
@@ -50,7 +47,7 @@ export abstract class ML5Model {
   }
 
   // TO-DO - linter and compiler are not picking up errors
-  public async train(data: JSONTable, headers: HeadersMetaData): Promise<void> {
+  public async train(data: JSONTableData, headers: HeadersMetaData): Promise<void> {
     // cannot simply retrain an alraday trained model with new data, hence need to initialize a new model
     this.createNewNeuralNetwork();
     return new Promise((resolve) => {
@@ -75,14 +72,13 @@ export abstract class ML5Model {
     this.isTrained = true;
   }
 
-  public async predict(table: JSONTable, headers: HeadersMetaData): Promise<ML5Result> {
+  public async predict(data: JSONTableData, headers: HeadersMetaData): Promise<ML5Result> {
     return new Promise((resolve) => {
       const input: ML5DataRow = {};
-      const headerRow = table[0];
-      headerRow.forEach((headerTexta: string, columnIndex: number) => {
+      headers.forEach((headerMetaData: HeaderMetaData, columnIndex: number) => {
         // TO-DO need to figure out when to convert and when to use as a class
-        const { text: headerText, type } = headers[columnIndex];
-        input[headerText] = ML5Model.getCellTextWithCorrectType(table[1], type, columnIndex);
+        const { text: headerText, type } = headerMetaData as Required<HeaderMetaData>;
+        input[headerText] = ML5Model.getCellTextWithCorrectType(data[0], type, columnIndex);
       });
       this.nn?.classify(input, handleResults);
 

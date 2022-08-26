@@ -1,7 +1,7 @@
-import { CSVData } from '../types/CSVData';
+import { CSV } from '../types/CSV';
 import Papa from 'papaparse';
 
-export class CSVDataReader {
+export class CSVReader {
   // TO-DO error handling
   private static async fetchString(path: string): Promise<string | null> {
     const response = await fetch(path);
@@ -12,10 +12,10 @@ export class CSVDataReader {
     return decoder.decode(result.value);
   }
 
-  public static async fetch(path: string): Promise<CSVData | null> {
-    const stringCSV = await CSVDataReader.fetchString(path);
+  public static async fetch(path: string): Promise<CSV | null> {
+    const stringCSV = await CSVReader.fetchString(path);
     if (!stringCSV) return null;
     const parsedCSV = Papa.parse(stringCSV);
-    return parsedCSV.data as CSVData;
+    return parsedCSV.data as CSV;
   }
 }

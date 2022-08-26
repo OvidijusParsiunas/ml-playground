@@ -1,8 +1,8 @@
 import { ML5ModelFactory } from '../shared/functionality/machineLearning/ml5/ml5ModelFactory';
 import { ML5Model } from '../shared/functionality/machineLearning/ml5/ml5Model';
-import { PredictTableActionTypes } from '../state/predictTable/consts';
+import { PredictTableDataActionTypes } from '../state/predictTableData/consts';
 import PredictButton from '../components/predictButton/PredictButton';
-import { TrainTableActionTypes } from '../state/trainTable/consts';
+import { TrainTableActionTypes } from '../state/trainTableData/consts';
 import TrainButton from '../components/trainButton/TrainButton';
 import StatefulTable from '../components/table/StatefulTable';
 import Result from '../components/result/Result';
@@ -31,9 +31,10 @@ export default function Full() {
       <div className="container">
         <div className="content">
           <StatefulTable
-            initialCSVDataPath="data/color.csv"
-            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE}
-            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_CELL}
+            initialCSVPath="data/color.csv"
+            isControllingHeaders={true}
+            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA}
+            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA_CELL}
           />
         </div>
         <div className="content">
@@ -41,9 +42,9 @@ export default function Full() {
         </div>
         <div className="content">
           <StatefulTable
-            initialCSVDataPath="data/predict.csv"
-            updateTableDispatchAction={PredictTableActionTypes.UPDATE_TABLE}
-            updateTableCellDispatchAction={PredictTableActionTypes.UPDATE_TABLE_CELL}
+            initialCSVPath="data/predict.csv"
+            updateTableDispatchAction={PredictTableDataActionTypes.UPDATE_TABLE_DATA}
+            updateTableCellDispatchAction={PredictTableDataActionTypes.UPDATE_TABLE_DATA_CELL}
           />
         </div>
         <div className="content">
