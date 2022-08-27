@@ -1,6 +1,6 @@
-import { HeaderMetaData, PredictTableAction, PredictTableState } from './types';
+import { TableHeader, TableHeaders } from '../../shared/types/tableHeader';
+import { PredictTableAction, PredictTableState } from './types';
 import { UpdateTableCell } from '../shared/updateTableCell';
-import { HeadersMetaData } from '../tableMetaData/types';
 import { PredictTableActionTypes } from './consts';
 
 const initialState: PredictTableState = { headers: [], data: {} };
@@ -10,8 +10,8 @@ const initialAction: PredictTableAction = {
   payload: initialState,
 };
 
-const updateHeaderText = (columnIndex: number, newText: string, headersMetaData: HeadersMetaData) => {
-  return headersMetaData.map((header: HeaderMetaData, index) => {
+const updateHeaderText = (columnIndex: number, newText: string, headers: TableHeaders) => {
+  return headers.map((header: TableHeader, index: number) => {
     if (columnIndex === index) {
       return { text: newText, type: header.type };
     }
@@ -37,12 +37,12 @@ export const PredictTableReducer = (
     }
     case PredictTableActionTypes.SET_TABLE_HEADERS_WITH_TEXT: {
       const { headersRow } = action.payload;
-      const newHeaders: HeadersMetaData = headersRow.map((headerText) => ({ text: headerText }));
+      const newHeaders: TableHeaders = headersRow.map((headerText) => ({ text: headerText }));
       return { ...state, headers: newHeaders };
     }
     case PredictTableActionTypes.UPDATE_TABLE_HEADER_TEXT: {
       const { columnIndex, newText } = action.payload;
-      const newHeaders: HeadersMetaData = updateHeaderText(columnIndex, newText, state.headers);
+      const newHeaders: TableHeaders = updateHeaderText(columnIndex, newText, state.headers);
       return { ...state, headers: newHeaders };
     }
     default:

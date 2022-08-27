@@ -1,6 +1,6 @@
 import { ML5DataRow, ML5Library, ML5NeuralNet, ML5Result, NeuralNetworkTaskTypes } from '../../../types/ml5';
-import { HeaderColumnType, HeaderMetaData, HeadersMetaData } from '../../../../state/tableMetaData/types';
-import { JSONTableContents } from '../../../types/JSONTableContents';
+import { HeaderColumnType, TableHeader, TableHeaders } from '../../../types/tableHeader';
+import { JSONTableData } from '../../../types/JSONTableData';
 import { TableRow } from '../../../types/tableContents';
 
 declare let ml5: ML5Library;
@@ -21,16 +21,16 @@ export abstract class ML5Model {
     return !!this.nn?.neuralNetwork.isTrained;
   }
 
-  private static getML5InputRow(dataRow: TableRow, headers: Required<HeadersMetaData>): ML5DataRow {
+  private static getML5InputRow(dataRow: TableRow, headers: Required<TableHeaders>): ML5DataRow {
     return headers
       .slice(0, headers.length - 1)
-      .reduce((accumulator: ML5DataRow, headerMetaData: HeaderMetaData, columnIndex: number) => {
-        const { text: headerText, type } = headerMetaData as Required<HeaderMetaData>;
+      .reduce((accumulator: ML5DataRow, header: TableHeader, columnIndex: number) => {
+        const { text: headerText, type } = header as Required<TableHeader>;
         return { ...accumulator, [headerText]: ML5Model.getCellTextWithCorrectType(dataRow, type, columnIndex) };
       }, {});
   }
 
-  protected addData(data: JSONTableContents, headers: HeadersMetaData): void {
+  private addData(data: JSONTableData, headers: TableHeaders): void {
     const predictionItemIndex = headers.length - 1;
     const nameOfItemToPredict = headers[predictionItemIndex];
     Object.keys(data).forEach((rowIndex: string) => {
@@ -46,7 +46,7 @@ export abstract class ML5Model {
   }
 
   // TO-DO - linter and compiler are not picking up errors
-  public async train(data: JSONTableContents, headers: HeadersMetaData): Promise<void> {
+  public async train(data: JSONTableData, headers: TableHeaders): Promise<void> {
     // cannot simply retrain an alraday trained model with new data, hence need to initialize a new model
     this.createNewNeuralNetwork();
     return new Promise((resolve) => {
@@ -70,11 +70,11 @@ export abstract class ML5Model {
     resolve();
   }
 
-  public async predict(data: JSONTableContents, headers: HeadersMetaData): Promise<ML5Result> {
+  public async predict(data: JSONTableData, headers: TableHeaders): Promise<ML5Result> {
     return new Promise((resolve) => {
       const input: ML5DataRow = {};
-      headers.forEach((headerMetaData: HeaderMetaData, columnIndex: number) => {
-        const { text: headerText, type } = headerMetaData as Required<HeaderMetaData>;
+      headers.forEach((header: TableHeader, columnIndex: number) => {
+        const { text: headerText, type } = header as Required<TableHeader>;
         input[headerText] = ML5Model.getCellTextWithCorrectType(data[0], type, columnIndex);
       });
       this.nn?.classify(input, handleResults);

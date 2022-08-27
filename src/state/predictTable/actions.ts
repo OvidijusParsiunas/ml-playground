@@ -1,8 +1,8 @@
-import { HeadersMetaData } from '../tableMetaData/types';
+import { TableHeaders } from '../../shared/types/tableHeader';
 import { PredictTableActionTypes } from './consts';
 import { PredictTableAction } from './types';
 
-export const setPredictTableHeaders = (headers: HeadersMetaData): PredictTableAction => ({
+export const setPredictTableHeaders = (headers: TableHeaders): PredictTableAction => ({
   type: PredictTableActionTypes.SET_TABLE_HEADERS,
   payload: headers,
 });

@@ -1,6 +1,4 @@
-import { TableMetaDataReducer } from './tableMetaData/reducer';
 import { PredictTableReducer } from './predictTable/reducer';
-import { TableMetaDataState } from './tableMetaData/types';
 import { TrainTableReducer } from './trainTable/reducer';
 import { PredictTableState } from './predictTable/types';
 import { CombinedState, combineReducers } from 'redux';
@@ -14,7 +12,6 @@ import { ModelState } from './model/types';
 export type RootReducer = {
   model: ModelState;
   result: ResultState;
-  tableMetaData: TableMetaDataState;
   trainTable: TrainTableState;
   predictTable: PredictTableState;
 };
@@ -22,7 +19,6 @@ export type RootReducer = {
 export const rootReducer: Reducer<CombinedState<RootReducer>, never> = combineReducers({
   model: ModelReducer,
   result: ResultReducer,
-  tableMetaData: TableMetaDataReducer,
   trainTable: TrainTableReducer,
   predictTable: PredictTableReducer,
 });

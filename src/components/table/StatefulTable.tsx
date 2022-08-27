@@ -5,8 +5,9 @@ import {
   UpdateTableAction,
 } from '../../state/shared/tableActions';
 import { setPredictTableHeadersWithText, updatePredictTableHeaderText } from '../../state/predictTable/actions';
+import { setTrainTableHeadersWithText, updateTrainTableHeaderText } from '../../state/trainTable/actions';
 import { TableContents, TableRow } from '../../shared/types/tableContents';
-import { JSONTableContents } from '../../shared/types/JSONTableContents';
+import { JSONTableData } from '../../shared/types/JSONTableData';
 import { CSVReader } from '../../shared/functionality/CSVReader';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootReducer } from '../../state/rootReducer';
@@ -51,19 +52,19 @@ export default function StatefulTable(props: Props) {
   };
 
   const updateTableStores = (CSV: CSV) => {
-    const JSONTableData = convertTableToJSON(isPredictTable ? CSV.slice(1) : CSV);
-    dispatch({
-      type: updateTableDispatchAction,
-      payload: JSONTableData,
-    } as UpdateTableAction);
-    if (isTrainTable && isPredictTableHeaderControlledByTrainTable()) {
-      dispatch(setPredictTableHeadersWithText(CSV[0].slice(0, CSV[0].length - 1)));
+    const JSONTableData = convertTableToJSON(CSV.slice(1));
+    dispatch({ type: updateTableDispatchAction, payload: JSONTableData } as UpdateTableAction);
+    if (isTrainTable) {
+      dispatch(setTrainTableHeadersWithText(CSV[0]));
+      if (isPredictTableHeaderControlledByTrainTable()) {
+        dispatch(setPredictTableHeadersWithText(CSV[0].slice(0, CSV[0].length - 1)));
+      }
     }
   };
 
-  const convertTableToJSON = (tableData: TableContents): JSONTableContents => {
+  const convertTableToJSON = (tableData: TableContents): JSONTableData => {
     return tableData.reduce(
-      (accumulator: JSONTableContents, row: TableRow, rowIndex: number) => ({ ...accumulator, [rowIndex]: row }),
+      (accumulator: JSONTableData, row: TableRow, rowIndex: number) => ({ ...accumulator, [rowIndex]: row }),
       {},
     );
   };
@@ -73,8 +74,11 @@ export default function StatefulTable(props: Props) {
       type: updateTableCellDispatchAction,
       payload: { rowIndex, columnIndex, newText },
     } as UpdateTableCellAction);
-    if (rowIndex === 0 && isPredictTableHeaderControlledByTrainTable()) {
-      dispatch(updatePredictTableHeaderText(columnIndex, newText));
+    if (rowIndex === 0) {
+      dispatch(updateTrainTableHeaderText(columnIndex, newText));
+      if (isPredictTableHeaderControlledByTrainTable()) {
+        dispatch(updatePredictTableHeaderText(columnIndex, newText));
+      }
     }
   };
 

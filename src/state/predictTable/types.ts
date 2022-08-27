@@ -1,4 +1,5 @@
-import { JSONTableContents } from '../../shared/types/JSONTableContents';
+import { JSONTableData } from '../../shared/types/JSONTableData';
+import { TableHeader } from '../../shared/types/tableHeader';
 import { PredictTableActionTypes } from './consts';
 
 type UpdatePredictTableDataAction = {
@@ -6,14 +7,14 @@ type UpdatePredictTableDataAction = {
   payload: PredictTableState;
 };
 
-type UpdatePrecitTableDataCellAction = {
+type UpdatePredictTableDataCellAction = {
   type: PredictTableActionTypes.UPDATE_TABLE_DATA_CELL;
   payload: { rowIndex: number; columnIndex: number; newText: string };
 };
 
-type UpdatePrecitTableHeadersAction = {
+type UpdatePredictTableHeadersAction = {
   type: PredictTableActionTypes.SET_TABLE_HEADERS;
-  payload: HeaderMetaData[];
+  payload: TableHeader[];
 };
 
 type SetPredictTableHeadersWithText = {
@@ -28,16 +29,9 @@ type UpdatePredictTableHeaderText = {
 
 export type PredictTableAction =
   | UpdatePredictTableDataAction
-  | UpdatePrecitTableDataCellAction
-  | UpdatePrecitTableHeadersAction
+  | UpdatePredictTableDataCellAction
+  | UpdatePredictTableHeadersAction
   | SetPredictTableHeadersWithText
   | UpdatePredictTableHeaderText;
 
-export type HeaderColumnType = 'number' | 'string';
-
-export type HeaderMetaData = {
-  text: string;
-  type?: HeaderColumnType;
-};
-
-export type PredictTableState = { headers: HeaderMetaData[]; data: JSONTableContents };
+export type PredictTableState = { headers: TableHeader[]; data: JSONTableData };

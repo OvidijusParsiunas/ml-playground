@@ -1,7 +1,7 @@
 import { ML5Model } from '../../shared/functionality/machineLearning/ml5/ml5Model';
+import { TableHeader, TableHeaders } from '../../shared/types/tableHeader';
 import { setPredictTableHeaders } from '../../state/predictTable/actions';
-import { JSONTableContents } from '../../shared/types/JSONTableContents';
-import { HeadersMetaData } from '../../state/tableMetaData/types';
+import { TrainTableState } from '../../state/trainTable/types';
 import { useDispatch } from 'react-redux';
 import { store } from '../../state/store';
 
@@ -9,14 +9,14 @@ interface Props {
   model: ML5Model | null;
 }
 
-const generateHeadersMetaData = (trainTable: JSONTableContents): HeadersMetaData => {
-  return trainTable[0].map((headerText: string, index: number) => {
-    const isFirstDataRowNumber = !isNaN(Number(trainTable[1][index]));
-    const isLastDataRowNumber = !isNaN(Number(trainTable[Object.keys(trainTable).length - 1][index]));
+const generateTableHeadersWithTypes = ({ headers, data }: TrainTableState): TableHeaders => {
+  return headers.map(({ text }: TableHeader, index: number) => {
+    const isFirstDataRowNumber = !isNaN(Number(data[1][index]));
+    const isLastDataRowNumber = !isNaN(Number(data[Object.keys(data).length - 1][index]));
     if (isFirstDataRowNumber && isLastDataRowNumber) {
-      return { text: headerText, type: 'number' };
+      return { text, type: 'number' };
     }
-    return { text: headerText, type: 'string' };
+    return { text, type: 'string' };
   });
 };
 
@@ -26,11 +26,11 @@ export default function TrainButton(props: Props) {
   const dispatch = useDispatch();
 
   const triggerML = () => {
-    const trainTableData = store.getState().trainTable;
-    const newHeaders = generateHeadersMetaData(trainTableData);
-    model?.train(trainTableData, newHeaders).then(() => {
+    const trainTableState = store.getState().trainTable;
+    const predictTableHeaders = generateTableHeadersWithTypes(trainTableState);
+    model?.train(trainTableState.data, predictTableHeaders).then(() => {
       console.log('Training finished!');
-      dispatch(setPredictTableHeaders(newHeaders.slice(0, newHeaders.length - 1)));
+      dispatch(setPredictTableHeaders(predictTableHeaders.slice(0, predictTableHeaders.length - 1)));
     });
   };
 

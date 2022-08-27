@@ -33,8 +33,8 @@ export default function Full() {
           <StatefulTable
             initialCSVPath="data/color.csv"
             isTrainTable={true}
-            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE}
-            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_CELL}
+            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA}
+            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA_CELL}
           />
         </div>
         <div className="content">
