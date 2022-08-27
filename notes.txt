@@ -5,8 +5,6 @@ drag and drop model to use it
 
 explore the csv to json function inside the model
 
-when the trained model:
-prediction table headers will only update when the model has been retrained
 allowed input types of the prediction table should be what was normalized
 
 multi row prediction

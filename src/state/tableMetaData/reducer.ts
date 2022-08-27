@@ -1,5 +1,5 @@
 import { HeaderMetaData, HeadersMetaData, TableMetaDataAction, TableMetaDataState } from './types';
-import { JSONTableData } from '../../shared/types/JSONTableData';
+import { JSONTableContents } from '../../shared/types/JSONTableContents';
 import { TableMetaDataActionTypes } from './consts';
 
 const initialState: TableMetaDataState = {
@@ -20,7 +20,7 @@ const updateHeaderText = (columnIndex: number, newText: string, headersMetaData:
   });
 };
 
-const updateHeadersTypes = (trainTableData: JSONTableData, headers: HeadersMetaData): HeadersMetaData => {
+const updateHeadersTypes = (trainTableData: JSONTableContents, headers: HeadersMetaData): HeadersMetaData => {
   return headers.map(({ text: headerText }: HeaderMetaData, index: number) => {
     const isFirstDataRowNumber = !isNaN(Number(trainTableData[0][index]));
     const isLastDataRowNumber = !isNaN(Number(trainTableData[Object.keys(trainTableData).length - 1][index]));

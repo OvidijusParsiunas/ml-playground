@@ -1,4 +1,4 @@
-import { TrainTableActionTypes } from '../state/trainTableData/consts';
+import { TrainTableActionTypes } from '../state/trainTable/consts';
 import StatefulTable from '../components/table/StatefulTable';
 import './train.css';
 
@@ -11,8 +11,8 @@ export default function Train() {
         <div style={{ float: 'right', marginRight: '15%' }}>
           <StatefulTable
             initialCSVPath="data/color.csv"
-            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA}
-            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA_CELL}
+            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE}
+            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_CELL}
           />
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { ML5DataRow, ML5Library, ML5NeuralNet, ML5Result, NeuralNetworkTaskTypes } from '../../../types/ml5';
 import { HeaderColumnType, HeaderMetaData, HeadersMetaData } from '../../../../state/tableMetaData/types';
-import { JSONTableData } from '../../../types/JSONTableData';
+import { JSONTableContents } from '../../../types/JSONTableContents';
 import { TableRow } from '../../../types/tableContents';
 
 declare let ml5: ML5Library;
@@ -30,7 +30,7 @@ export abstract class ML5Model {
       }, {});
   }
 
-  protected addData(data: JSONTableData, headers: HeadersMetaData): void {
+  protected addData(data: JSONTableContents, headers: HeadersMetaData): void {
     const predictionItemIndex = headers.length - 1;
     const nameOfItemToPredict = headers[predictionItemIndex];
     Object.keys(data).forEach((rowIndex: string) => {
@@ -46,7 +46,7 @@ export abstract class ML5Model {
   }
 
   // TO-DO - linter and compiler are not picking up errors
-  public async train(data: JSONTableData, headers: HeadersMetaData): Promise<void> {
+  public async train(data: JSONTableContents, headers: HeadersMetaData): Promise<void> {
     // cannot simply retrain an alraday trained model with new data, hence need to initialize a new model
     this.createNewNeuralNetwork();
     return new Promise((resolve) => {
@@ -70,7 +70,7 @@ export abstract class ML5Model {
     resolve();
   }
 
-  public async predict(data: JSONTableData, headers: HeadersMetaData): Promise<ML5Result> {
+  public async predict(data: JSONTableContents, headers: HeadersMetaData): Promise<ML5Result> {
     return new Promise((resolve) => {
       const input: ML5DataRow = {};
       headers.forEach((headerMetaData: HeaderMetaData, columnIndex: number) => {

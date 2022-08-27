@@ -1,4 +1,4 @@
-import { JSONTableData } from '../../shared/types/JSONTableData';
+import { JSONTableContents } from '../../shared/types/JSONTableContents';
 import { TableRow } from '../../shared/types/tableContents';
 import { TableMetaDataActionTypes } from './consts';
 
@@ -9,7 +9,7 @@ type SetHeadersWithTextAction = {
 
 type UpdateHeadersTypesAction = {
   type: TableMetaDataActionTypes.UPDATE_HEADERS_TYPES;
-  payload: { trainTableData: JSONTableData };
+  payload: { trainTableData: JSONTableContents };
 };
 
 type UpdateHeaderTextAction = {

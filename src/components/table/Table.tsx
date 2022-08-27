@@ -67,7 +67,8 @@ export default function Table(props: Props) {
 
   return (
     <div>
-      <div id="header">{populateDataRow(headers?.slice(0, headers.length - 1) || tableContents.current[0], 0, true)}</div>
+      {/* headers from parent state or this component */}
+      <div id="header">{populateDataRow(headers || tableContents.current[0], 0, true)}</div>
       <div id="data">{populateData(tableContents.current.slice(1))}</div>
     </div>
   );

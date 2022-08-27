@@ -1,8 +1,8 @@
 import { ML5ModelFactory } from '../shared/functionality/machineLearning/ml5/ml5ModelFactory';
 import { ML5Model } from '../shared/functionality/machineLearning/ml5/ml5Model';
-import { PredictTableDataActionTypes } from '../state/predictTableData/consts';
+import { PredictTableActionTypes } from '../state/predictTable/consts';
 import PredictButton from '../components/predictButton/PredictButton';
-import { TrainTableActionTypes } from '../state/trainTableData/consts';
+import { TrainTableActionTypes } from '../state/trainTable/consts';
 import TrainButton from '../components/trainButton/TrainButton';
 import StatefulTable from '../components/table/StatefulTable';
 import Result from '../components/result/Result';
@@ -32,9 +32,9 @@ export default function Full() {
         <div className="content">
           <StatefulTable
             initialCSVPath="data/color.csv"
-            isControllingHeaders={true}
-            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA}
-            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA_CELL}
+            isTrainTable={true}
+            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE}
+            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_CELL}
           />
         </div>
         <div className="content">
@@ -43,9 +43,9 @@ export default function Full() {
         <div className="content">
           <StatefulTable
             initialCSVPath="data/predict.csv"
-            statefulHeaders={true}
-            updateTableDispatchAction={PredictTableDataActionTypes.UPDATE_TABLE_DATA}
-            updateTableCellDispatchAction={PredictTableDataActionTypes.UPDATE_TABLE_DATA_CELL}
+            isPredictTable={true}
+            updateTableDispatchAction={PredictTableActionTypes.UPDATE_TABLE_DATA}
+            updateTableCellDispatchAction={PredictTableActionTypes.UPDATE_TABLE_DATA_CELL}
             areHeadersEditable={false}
           />
         </div>

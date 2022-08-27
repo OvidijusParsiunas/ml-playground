@@ -1,4 +1,4 @@
-import { JSONTableData } from '../../shared/types/JSONTableData';
+import { JSONTableContents } from '../../shared/types/JSONTableContents';
 import { TableRow } from '../../shared/types/tableContents';
 import { TableMetaDataActionTypes } from './consts';
 import { TableMetaDataAction } from './types';
@@ -8,7 +8,7 @@ export const setHeadersWithText = (headers: TableRow): TableMetaDataAction => ({
   payload: { headersRow: headers },
 });
 
-export const updateHeadersTypes = (trainTableData: JSONTableData): TableMetaDataAction => ({
+export const updateHeadersTypes = (trainTableData: JSONTableContents): TableMetaDataAction => ({
   type: TableMetaDataActionTypes.UPDATE_HEADERS_TYPES,
   payload: { trainTableData },
 });

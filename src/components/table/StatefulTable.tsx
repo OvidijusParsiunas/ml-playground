@@ -1,27 +1,28 @@
 import {
-  UpdateTableDataCellActionsTypes,
-  UpdateTableDataActionsTypes,
-  UpdateTableCellDataAction,
-  UpdateTableDataAction,
-} from '../../state/shared/tableDataActions';
-import { setHeadersWithText, updateHeaderText } from '../../state/tableMetaData/actions';
+  UpdateTablCellActionsTypes,
+  UpdateTableActionsTypes,
+  UpdateTableCellAction,
+  UpdateTableAction,
+} from '../../state/shared/tableActions';
+import { setPredictTableHeadersWithText, updatePredictTableHeaderText } from '../../state/predictTable/actions';
 import { TableContents, TableRow } from '../../shared/types/tableContents';
+import { JSONTableContents } from '../../shared/types/JSONTableContents';
 import { CSVReader } from '../../shared/functionality/CSVReader';
-import { JSONTableData } from '../../shared/types/JSONTableData';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootReducer } from '../../state/rootReducer';
 import { CSV } from '../../shared/types/CSV';
 import { useEffect, useRef } from 'react';
+import { store } from '../../state/store';
 import { useState } from 'react';
 import Table from './Table';
 
 interface Props {
   initialCSVPath: string;
-  statefulHeaders?: boolean;
+  isPredictTable?: boolean;
   areHeadersEditable?: boolean;
-  isControllingHeaders?: boolean;
-  updateTableDispatchAction: UpdateTableDataActionsTypes;
-  updateTableCellDispatchAction: UpdateTableDataCellActionsTypes;
+  isTrainTable?: boolean;
+  updateTableDispatchAction: UpdateTableActionsTypes;
+  updateTableCellDispatchAction: UpdateTablCellActionsTypes;
 }
 
 // https://codesandbox.io/s/editable-react-table-gchwp?fontsize=14&hidenavigation=1&theme=dark&file=/src/App.js
@@ -30,9 +31,9 @@ interface Props {
 export default function StatefulTable(props: Props) {
   const {
     initialCSVPath,
-    statefulHeaders,
+    isPredictTable,
     areHeadersEditable,
-    isControllingHeaders,
+    isTrainTable,
     updateTableDispatchAction,
     updateTableCellDispatchAction,
   } = props;
@@ -41,34 +42,39 @@ export default function StatefulTable(props: Props) {
 
   const initialTableContents = useRef<TableContents>([]);
   const forceRerender = useState<boolean>(false)[1];
-  const headerState = statefulHeaders
-    ? useSelector<RootReducer, RootReducer['tableMetaData']['headers']>((state) => state.tableMetaData.headers)
+  const predictHeaders = isPredictTable
+    ? useSelector<RootReducer, RootReducer['predictTable']['headers']>((state) => state.predictTable.headers)
     : null;
 
+  const isPredictTableHeaderControlledByTrainTable = (): boolean => {
+    return !!(isTrainTable && !store.getState().predictTable.headers?.[0]?.type);
+  };
+
   const updateTableStores = (CSV: CSV) => {
-    const JSONTableData = convertTableToJSON(CSV.slice(1));
+    const JSONTableData = convertTableToJSON(isPredictTable ? CSV.slice(1) : CSV);
     dispatch({
       type: updateTableDispatchAction,
       payload: JSONTableData,
-    } as UpdateTableDataAction);
-    if (isControllingHeaders) dispatch(setHeadersWithText(CSV[0]));
+    } as UpdateTableAction);
+    if (isTrainTable && isPredictTableHeaderControlledByTrainTable()) {
+      dispatch(setPredictTableHeadersWithText(CSV[0].slice(0, CSV[0].length - 1)));
+    }
   };
 
-  const convertTableToJSON = (tableData: TableContents): JSONTableData => {
+  const convertTableToJSON = (tableData: TableContents): JSONTableContents => {
     return tableData.reduce(
-      (accumulator: JSONTableData, row: TableRow, rowIndex: number) => ({ ...accumulator, [rowIndex]: row }),
+      (accumulator: JSONTableContents, row: TableRow, rowIndex: number) => ({ ...accumulator, [rowIndex]: row }),
       {},
     );
   };
 
   const updateTableCellStore = (rowIndex: number, columnIndex: number, newText: string) => {
-    if (rowIndex === 0) {
-      dispatch(updateHeaderText(columnIndex, newText));
-    } else {
-      dispatch({
-        type: updateTableCellDispatchAction,
-        payload: { rowIndex, columnIndex, newText },
-      } as UpdateTableCellDataAction);
+    dispatch({
+      type: updateTableCellDispatchAction,
+      payload: { rowIndex, columnIndex, newText },
+    } as UpdateTableCellAction);
+    if (rowIndex === 0 && isPredictTableHeaderControlledByTrainTable()) {
+      dispatch(updatePredictTableHeaderText(columnIndex, newText));
     }
   };
 
@@ -97,7 +103,7 @@ export default function StatefulTable(props: Props) {
     if (initialTableContents.current.length > 0) {
       return (
         <Table
-          headers={headerState?.map((header) => header.text)}
+          headers={predictHeaders?.map((header) => header.text)}
           initialContent={initialTableContents.current}
           cellUpdated={updateTableCellStore}
           areHeadersEditable={areHeadersEditable}
