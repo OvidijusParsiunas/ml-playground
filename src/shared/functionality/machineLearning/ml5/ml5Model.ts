@@ -5,20 +5,20 @@ import { TableRow } from '../../../types/tableContents';
 
 declare let ml5: ML5Library;
 
-// TO-DO Refactor to use internal API and have this class be static with utils
-// can potentially used as an alternative to global redux
+// TO-DO Refactor to use internal API such as the csv to json function inside the model
 // this servers as a wrapper for ml5 neural net api
-// core purpose is the boolean ability to check if the model is trained
 export abstract class ML5Model {
   protected abstract typeOfNeuralNetworkTask: NeuralNetworkTaskTypes;
 
   private nn: ML5NeuralNet | null = null;
 
-  public isTrained = false;
-
   private static getCellTextWithCorrectType(dataRow: TableRow, type: HeaderColumnType, columnIndex: number) {
     const inputText = dataRow[columnIndex];
     return type === 'number' ? Number(inputText) : inputText;
+  }
+
+  public isModelTrained(): boolean {
+    return !!this.nn?.neuralNetwork.isTrained;
   }
 
   private static getML5InputRow(dataRow: TableRow, headers: Required<HeadersMetaData>): ML5DataRow {
@@ -26,7 +26,6 @@ export abstract class ML5Model {
       .slice(0, headers.length - 1)
       .reduce((accumulator: ML5DataRow, headerMetaData: HeaderMetaData, columnIndex: number) => {
         const { text: headerText, type } = headerMetaData as Required<HeaderMetaData>;
-        // TO-DO need to figure out when to convert and when to use as a class
         return { ...accumulator, [headerText]: ML5Model.getCellTextWithCorrectType(dataRow, type, columnIndex) };
       }, {});
   }
@@ -69,14 +68,12 @@ export abstract class ML5Model {
 
   private finishTraining(resolve: () => void): void {
     resolve();
-    this.isTrained = true;
   }
 
   public async predict(data: JSONTableData, headers: HeadersMetaData): Promise<ML5Result> {
     return new Promise((resolve) => {
       const input: ML5DataRow = {};
       headers.forEach((headerMetaData: HeaderMetaData, columnIndex: number) => {
-        // TO-DO need to figure out when to convert and when to use as a class
         const { text: headerText, type } = headerMetaData as Required<HeaderMetaData>;
         input[headerText] = ML5Model.getCellTextWithCorrectType(data[0], type, columnIndex);
       });

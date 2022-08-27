@@ -22,6 +22,7 @@ export default function PredictButton(props: Props) {
   };
 
   const triggerML = () => {
+    if (!model?.isModelTrained()) return;
     const predictTableData = store.getState().predictTableData;
     const headers = store.getState().tableMetaData.headers;
     model?.predict(predictTableData, headers).then((result) => {

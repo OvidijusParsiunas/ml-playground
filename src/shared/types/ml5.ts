@@ -26,6 +26,7 @@ export type ML5NeuralNet = {
     finishCallback: () => void,
   ) => void;
   classify: (input: ML5DataRow, resultHandler: (error: Error, result: ML5Result) => void) => void;
+  neuralNetwork: { isTrained: boolean };
 };
 
 export interface ML5Library {

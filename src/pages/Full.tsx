@@ -43,6 +43,7 @@ export default function Full() {
         <div className="content">
           <StatefulTable
             initialCSVPath="data/predict.csv"
+            statefulHeaders={true}
             updateTableDispatchAction={PredictTableDataActionTypes.UPDATE_TABLE_DATA}
             updateTableCellDispatchAction={PredictTableDataActionTypes.UPDATE_TABLE_DATA_CELL}
             areHeadersEditable={false}

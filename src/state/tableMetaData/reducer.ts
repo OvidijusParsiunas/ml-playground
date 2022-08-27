@@ -37,12 +37,12 @@ export const TableMetaDataReducer = (
 ): TableMetaDataState => {
   switch (action.type) {
     case TableMetaDataActionTypes.SET_HEADERS_WITH_TEXT: {
-      const headersRow = action.payload.headersRow;
+      const { headersRow } = action.payload;
       const newHeaders: HeadersMetaData = headersRow.map((headerText) => ({ text: headerText }));
       return { ...state, headers: newHeaders };
     }
     case TableMetaDataActionTypes.UPDATE_HEADERS_TYPES: {
-      const newHeaders = updateHeadersTypes(action.payload.trainTableData, state.headers);
+      const newHeaders: HeadersMetaData = updateHeadersTypes(action.payload.trainTableData, state.headers);
       return { ...state, headers: newHeaders };
     }
     case TableMetaDataActionTypes.UPDATE_HEADER_TEXT: {

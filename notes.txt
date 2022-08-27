@@ -1,13 +1,9 @@
 concept for multiple models:
 store/save multiple models and use them as you want
+version models
 drag and drop model to use it
 
 explore the csv to json function inside the model
-
-the headers of the prediction table cannot be ammended
-
-there is no trained model:
-prediction table headers should automatically update when
 
 when the trained model:
 prediction table headers will only update when the model has been retrained

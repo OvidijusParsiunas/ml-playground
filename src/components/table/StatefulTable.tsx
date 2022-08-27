@@ -8,14 +8,16 @@ import { setHeadersWithText, updateHeaderText } from '../../state/tableMetaData/
 import { TableContents, TableRow } from '../../shared/types/tableContents';
 import { CSVReader } from '../../shared/functionality/CSVReader';
 import { JSONTableData } from '../../shared/types/JSONTableData';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootReducer } from '../../state/rootReducer';
 import { CSV } from '../../shared/types/CSV';
-import { useDispatch } from 'react-redux';
 import { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import Table from './Table';
 
 interface Props {
   initialCSVPath: string;
+  statefulHeaders?: boolean;
   areHeadersEditable?: boolean;
   isControllingHeaders?: boolean;
   updateTableDispatchAction: UpdateTableDataActionsTypes;
@@ -28,6 +30,7 @@ interface Props {
 export default function StatefulTable(props: Props) {
   const {
     initialCSVPath,
+    statefulHeaders,
     areHeadersEditable,
     isControllingHeaders,
     updateTableDispatchAction,
@@ -38,6 +41,9 @@ export default function StatefulTable(props: Props) {
 
   const initialTableContents = useRef<TableContents>([]);
   const forceRerender = useState<boolean>(false)[1];
+  const headerState = statefulHeaders
+    ? useSelector<RootReducer, RootReducer['tableMetaData']['headers']>((state) => state.tableMetaData.headers)
+    : null;
 
   const updateTableStores = (CSV: CSV) => {
     const JSONTableData = convertTableToJSON(CSV.slice(1));
@@ -91,6 +97,7 @@ export default function StatefulTable(props: Props) {
     if (initialTableContents.current.length > 0) {
       return (
         <Table
+          headers={headerState?.map((header) => header.text)}
           initialContent={initialTableContents.current}
           cellUpdated={updateTableCellStore}
           areHeadersEditable={areHeadersEditable}

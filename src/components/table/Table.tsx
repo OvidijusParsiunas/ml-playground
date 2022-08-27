@@ -3,6 +3,7 @@ import React from 'react';
 import './table.css';
 
 interface Props {
+  headers?: string[];
   areHeadersEditable?: boolean;
   initialContent: TableContents;
   tableUpdated?: (table: TableContents) => void;
@@ -10,7 +11,7 @@ interface Props {
 }
 
 export default function Table(props: Props) {
-  const { initialContent, areHeadersEditable, tableUpdated, cellUpdated } = props;
+  const { headers, initialContent, areHeadersEditable, tableUpdated, cellUpdated } = props;
 
   const tableContents = React.useRef<TableContents>(JSON.parse(JSON.stringify(initialContent)));
 
@@ -66,7 +67,7 @@ export default function Table(props: Props) {
 
   return (
     <div>
-      <div id="header">{populateDataRow(tableContents.current[0], 0, true)}</div>
+      <div id="header">{populateDataRow(headers?.slice(0, headers.length - 1) || tableContents.current[0], 0, true)}</div>
       <div id="data">{populateData(tableContents.current.slice(1))}</div>
     </div>
   );
