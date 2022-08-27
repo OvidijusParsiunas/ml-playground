@@ -45,6 +45,7 @@ export default function Full() {
             initialCSVPath="data/predict.csv"
             updateTableDispatchAction={PredictTableDataActionTypes.UPDATE_TABLE_DATA}
             updateTableCellDispatchAction={PredictTableDataActionTypes.UPDATE_TABLE_DATA_CELL}
+            areHeadersEditable={false}
           />
         </div>
         <div className="content">

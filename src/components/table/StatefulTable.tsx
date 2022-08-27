@@ -16,6 +16,7 @@ import Table from './Table';
 
 interface Props {
   initialCSVPath: string;
+  areHeadersEditable?: boolean;
   isControllingHeaders?: boolean;
   updateTableDispatchAction: UpdateTableDataActionsTypes;
   updateTableCellDispatchAction: UpdateTableDataCellActionsTypes;
@@ -25,7 +26,13 @@ interface Props {
 // https://react-data-table-component.netlify.app/?path=/docs/getting-started-patterns--page
 // https://github.com/revolist/revogrid
 export default function StatefulTable(props: Props) {
-  const { initialCSVPath, isControllingHeaders, updateTableDispatchAction, updateTableCellDispatchAction } = props;
+  const {
+    initialCSVPath,
+    areHeadersEditable,
+    isControllingHeaders,
+    updateTableDispatchAction,
+    updateTableCellDispatchAction,
+  } = props;
 
   const dispatch = useDispatch();
 
@@ -82,10 +89,20 @@ export default function StatefulTable(props: Props) {
 
   const getTable = (): JSX.Element => {
     if (initialTableContents.current.length > 0) {
-      return <Table initialContent={initialTableContents.current} cellUpdated={updateTableCellStore} />;
+      return (
+        <Table
+          initialContent={initialTableContents.current}
+          cellUpdated={updateTableCellStore}
+          areHeadersEditable={areHeadersEditable}
+        />
+      );
     }
     return <div></div>;
   };
 
   return <div style={{ width: 'fit-content', margin: 'auto' }}>{getTable()}</div>;
 }
+
+StatefulTable.defaultProps = {
+  areHeadersEditable: true,
+};

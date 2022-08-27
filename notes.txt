@@ -1,3 +1,7 @@
+concept for multiple models:
+store/save multiple models and use them as you want
+drag and drop model to use it
+
 explore the csv to json function inside the model
 
 the headers of the prediction table cannot be ammended

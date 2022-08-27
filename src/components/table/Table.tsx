@@ -3,13 +3,14 @@ import React from 'react';
 import './table.css';
 
 interface Props {
+  areHeadersEditable?: boolean;
   initialContent: TableContents;
   tableUpdated?: (table: TableContents) => void;
   cellUpdated?: (rowIndex: number, columnIndex: number, newText: string) => void;
 }
 
 export default function Table(props: Props) {
-  const { initialContent, tableUpdated, cellUpdated } = props;
+  const { initialContent, areHeadersEditable, tableUpdated, cellUpdated } = props;
 
   const tableContents = React.useRef<TableContents>(JSON.parse(JSON.stringify(initialContent)));
 
@@ -34,13 +35,14 @@ export default function Table(props: Props) {
     }
   };
 
-  const generateCells = (dataRow: TableRow, rowIndex: number) => {
+  const generateCells = (dataRow: TableRow, rowIndex: number, isHeader = false) => {
+    const isContentEditable = isHeader ? areHeadersEditable : true;
     return dataRow.map((cellName: string, columnIndex: number) => {
       return (
         <div
           className={`row-${rowIndex}-column-${columnIndex} cell`}
           key={columnIndex}
-          contentEditable
+          contentEditable={isContentEditable}
           onInput={updateCell}
           suppressContentEditableWarning={true}
         >
@@ -50,10 +52,10 @@ export default function Table(props: Props) {
     });
   };
 
-  const populateDataRow = (dataRow: TableRow, rowIndex: number): JSX.Element => {
+  const populateDataRow = (dataRow: TableRow, rowIndex: number, isHeader = false): JSX.Element => {
     return (
       <div className="row" key={rowIndex}>
-        {generateCells(dataRow, rowIndex)}
+        {generateCells(dataRow, rowIndex, isHeader)}
       </div>
     );
   };
@@ -64,8 +66,12 @@ export default function Table(props: Props) {
 
   return (
     <div>
-      <div id="header">{populateDataRow(tableContents.current[0], 0)}</div>
+      <div id="header">{populateDataRow(tableContents.current[0], 0, true)}</div>
       <div id="data">{populateData(tableContents.current.slice(1))}</div>
     </div>
   );
 }
+
+Table.defaultProps = {
+  areHeadersEditable: true,
+};
