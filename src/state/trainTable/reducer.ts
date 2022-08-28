@@ -1,22 +1,15 @@
-import { TableHeader, TableHeaders } from '../../shared/types/tableHeader';
+import { JSONTableData } from '../../shared/types/JSONTableData';
+import { TableHeaders } from '../../shared/types/tableHeader';
 import { TrainTableAction, TrainTableState } from './types';
 import { UpdateTableCell } from '../shared/updateTableCell';
 import { TrainTableActionTypes } from './consts';
 
+// TO-DO this table may be placed in the same store as the predict table - stores, see if it has anything unique later on
 const initialState: TrainTableState = { headers: [], data: {} };
 
 const initialAction: TrainTableAction = {
   type: TrainTableActionTypes.UPDATE_TABLE_DATA,
   payload: initialState,
-};
-
-const updateHeaderText = (columnIndex: number, newText: string, headers: TableHeaders) => {
-  return headers.map((header: TableHeader, index: number) => {
-    if (columnIndex === index) {
-      return { text: newText, type: header.type };
-    }
-    return { ...header };
-  });
 };
 
 export const TrainTableReducer = (
@@ -29,7 +22,7 @@ export const TrainTableReducer = (
     }
     case TrainTableActionTypes.UPDATE_TABLE_DATA_CELL: {
       const { rowIndex, columnIndex, newText } = action.payload;
-      const newRow = UpdateTableCell.getNewRow(rowIndex, columnIndex, newText, state.data, false);
+      const newRow: JSONTableData = UpdateTableCell.getUpdatedRowWithNewText(rowIndex, columnIndex, newText, state.data);
       return { ...state, data: { ...state.data, ...newRow } };
     }
     case TrainTableActionTypes.SET_TABLE_HEADERS: {
@@ -42,7 +35,7 @@ export const TrainTableReducer = (
     }
     case TrainTableActionTypes.UPDATE_TABLE_HEADER_TEXT: {
       const { columnIndex, newText } = action.payload;
-      const newHeaders: TableHeaders = updateHeaderText(columnIndex, newText, state.headers);
+      const newHeaders: TableHeaders = UpdateTableCell.getUpdatedHeadersWithNewText(columnIndex, newText, state.headers);
       return { ...state, headers: newHeaders };
     }
     default:

@@ -2,18 +2,20 @@ import { JSONTableData } from '../../shared/types/JSONTableData';
 import { PredictTableActionTypes } from '../predictTable/consts';
 import { TrainTableActionTypes } from '../trainTable/consts';
 
-export type UpdateTableActionsTypes = TrainTableActionTypes.UPDATE_TABLE_DATA | PredictTableActionTypes.UPDATE_TABLE_DATA;
+export type UpdateTableDataActionsTypes =
+  | TrainTableActionTypes.UPDATE_TABLE_DATA
+  | PredictTableActionTypes.UPDATE_TABLE_DATA;
 
-export type UpdateTablCellActionsTypes =
+export type UpdateTableDataCellActionsTypes =
   | TrainTableActionTypes.UPDATE_TABLE_DATA_CELL
   | PredictTableActionTypes.UPDATE_TABLE_DATA_CELL;
 
-export type UpdateTableAction = {
-  type: UpdateTableActionsTypes;
+export type UpdateTableDataAction = {
+  type: UpdateTableDataActionsTypes;
   payload: JSONTableData;
 };
 
-export type UpdateTableCellAction = {
-  type: UpdateTablCellActionsTypes;
+export type UpdateTableDataCellAction = {
+  type: UpdateTableDataCellActionsTypes;
   payload: { rowIndex: number; columnIndex: number; newText: string };
 };

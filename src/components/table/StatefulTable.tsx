@@ -1,9 +1,9 @@
 import {
-  UpdateTablCellActionsTypes,
-  UpdateTableActionsTypes,
-  UpdateTableCellAction,
-  UpdateTableAction,
-} from '../../state/shared/tableActions';
+  UpdateTableDataCellActionsTypes,
+  UpdateTableDataActionsTypes,
+  UpdateTableDataCellAction,
+  UpdateTableDataAction,
+} from '../../state/shared/tableDataActions';
 import { setPredictTableHeadersWithText, updatePredictTableHeaderText } from '../../state/predictTable/actions';
 import { setTrainTableHeadersWithText, updateTrainTableHeaderText } from '../../state/trainTable/actions';
 import { TableContents, TableRow } from '../../shared/types/tableContents';
@@ -22,8 +22,8 @@ interface Props {
   isPredictTable?: boolean;
   areHeadersEditable?: boolean;
   isTrainTable?: boolean;
-  updateTableDispatchAction: UpdateTableActionsTypes;
-  updateTableCellDispatchAction: UpdateTablCellActionsTypes;
+  updateTableDataDispatchAction: UpdateTableDataActionsTypes;
+  updateTableDataCellDispatchAction: UpdateTableDataCellActionsTypes;
 }
 
 // https://codesandbox.io/s/editable-react-table-gchwp?fontsize=14&hidenavigation=1&theme=dark&file=/src/App.js
@@ -35,8 +35,8 @@ export default function StatefulTable(props: Props) {
     isPredictTable,
     areHeadersEditable,
     isTrainTable,
-    updateTableDispatchAction,
-    updateTableCellDispatchAction,
+    updateTableDataDispatchAction,
+    updateTableDataCellDispatchAction,
   } = props;
 
   const dispatch = useDispatch();
@@ -53,7 +53,7 @@ export default function StatefulTable(props: Props) {
 
   const updateTableStores = (CSV: CSV) => {
     const JSONTableData = convertTableToJSON(CSV.slice(1));
-    dispatch({ type: updateTableDispatchAction, payload: JSONTableData } as UpdateTableAction);
+    dispatch({ type: updateTableDataDispatchAction, payload: JSONTableData } as UpdateTableDataAction);
     if (isTrainTable) {
       dispatch(setTrainTableHeadersWithText(CSV[0]));
       if (isPredictTableHeaderControlledByTrainTable()) {
@@ -71,9 +71,9 @@ export default function StatefulTable(props: Props) {
 
   const updateTableCellStore = (rowIndex: number, columnIndex: number, newText: string) => {
     dispatch({
-      type: updateTableCellDispatchAction,
+      type: updateTableDataCellDispatchAction,
       payload: { rowIndex, columnIndex, newText },
-    } as UpdateTableCellAction);
+    } as UpdateTableDataCellAction);
     if (rowIndex === 0) {
       dispatch(updateTrainTableHeaderText(columnIndex, newText));
       if (isPredictTableHeaderControlledByTrainTable()) {

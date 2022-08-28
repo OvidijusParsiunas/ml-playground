@@ -33,8 +33,8 @@ export default function Full() {
           <StatefulTable
             initialCSVPath="data/color.csv"
             isTrainTable={true}
-            updateTableDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA}
-            updateTableCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA_CELL}
+            updateTableDataDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA}
+            updateTableDataCellDispatchAction={TrainTableActionTypes.UPDATE_TABLE_DATA_CELL}
           />
         </div>
         <div className="content">
@@ -44,8 +44,8 @@ export default function Full() {
           <StatefulTable
             initialCSVPath="data/predict.csv"
             isPredictTable={true}
-            updateTableDispatchAction={PredictTableActionTypes.UPDATE_TABLE_DATA}
-            updateTableCellDispatchAction={PredictTableActionTypes.UPDATE_TABLE_DATA_CELL}
+            updateTableDataDispatchAction={PredictTableActionTypes.UPDATE_TABLE_DATA}
+            updateTableDataCellDispatchAction={PredictTableActionTypes.UPDATE_TABLE_DATA_CELL}
             areHeadersEditable={false}
           />
         </div>
