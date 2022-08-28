@@ -29,10 +29,13 @@
   padding-left: 16px;
   padding-right: 16px;
   box-sizing: border-box;
+  /* the line height needs to fill the cell in order to prevent mouse click above text to default the editable
+     content cursor to the start of the text in situations where it should be placed at the end */
+  line-height: 48px;
+  outline: none;
 }
 
 /* check if this is a good workaround for smaller devices */
 .cell:empty {
   text-align: left;
-  line-height: 45px;
 }
