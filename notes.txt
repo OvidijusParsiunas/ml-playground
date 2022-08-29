@@ -1,3 +1,5 @@
+@tensorflow/tfjs dependency is used for scikitlearn library
+
 concept for multiple models:
 store/save multiple models and use them as you want
 version models
