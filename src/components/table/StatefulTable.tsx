@@ -70,15 +70,16 @@ export default function StatefulTable(props: Props) {
   };
 
   const updateTableCellStore = (rowIndex: number, columnIndex: number, newText: string) => {
-    dispatch({
-      type: updateTableDataCellDispatchAction,
-      payload: { rowIndex, columnIndex, newText },
-    } as UpdateTableDataCellAction);
     if (rowIndex === 0) {
       dispatch(updateTrainTableHeaderText(columnIndex, newText));
       if (isPredictTableHeaderControlledByTrainTable()) {
         dispatch(updatePredictTableHeaderText(columnIndex, newText));
       }
+    } else {
+      dispatch({
+        type: updateTableDataCellDispatchAction,
+        payload: { rowIndex, columnIndex, newText },
+      } as UpdateTableDataCellAction);
     }
   };
 

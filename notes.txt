@@ -1,3 +1,5 @@
+ability to add row, column, remove row, column, copy text
+
 @tensorflow/tfjs dependency is used for scikitlearn library
 
 concept for multiple models:

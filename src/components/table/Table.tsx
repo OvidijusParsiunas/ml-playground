@@ -1,5 +1,7 @@
 import { TableContents, TableRow } from '../../shared/types/tableContents';
-import React from 'react';
+import { ParseCSVClipboardText } from './parseCSVClipboardText';
+import { CSV } from '../../shared/types/CSV';
+import React, { useState } from 'react';
 import './table.css';
 
 interface Props {
@@ -14,6 +16,7 @@ export default function Table(props: Props) {
   const { headers, initialContent, areHeadersEditable, tableUpdated, cellUpdated } = props;
 
   const tableContents = React.useRef<TableContents>(JSON.parse(JSON.stringify(initialContent)));
+  const [rerenderState, forceRerender] = useState<boolean>(false);
 
   const getCellPosition = (className: string) => {
     const digitsRegex = /\d+/g;
@@ -21,19 +24,64 @@ export default function Table(props: Props) {
     return [Number(rowIndex), Number(columnIndex)];
   };
 
-  const updateCell = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event) return;
-    const { className, textContent: cellText } = event.target;
-    const [rowIndex, columnIndex] = getCellPosition(className);
-    tableContents.current[rowIndex][columnIndex] = cellText as string;
+  const fireCellUpdated = (rowIndex: number, columnIndex: number, cellText: string) => {
+    if (cellUpdated) {
+      cellUpdated(rowIndex, columnIndex, cellText);
+    }
+  };
+
+  const fireTableUpdated = () => {
     if (tableUpdated) {
       // needs to be done for immutability
       // may not be efficient if table has many rows and updated frequently
       tableUpdated(JSON.parse(JSON.stringify(tableContents.current)));
     }
-    if (cellUpdated) {
-      cellUpdated(rowIndex, columnIndex, cellText as string);
+  };
+
+  const updateCellText = (target: HTMLElement) => {
+    const { className, textContent: cellText } = target;
+    const [rowIndex, columnIndex] = getCellPosition(className);
+    tableContents.current[rowIndex][columnIndex] = cellText as string;
+    fireCellUpdated(rowIndex, columnIndex, cellText as string);
+    fireTableUpdated();
+  };
+
+  const updateCellOnInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event) return;
+    const nativeEvent = event.nativeEvent as unknown as { inputType: string };
+    if (nativeEvent.inputType !== 'insertFromPaste') {
+      updateCellText(event.target);
     }
+  };
+
+  // TO-DO create new rows/columns if index exceeds the current amount
+  // TO-DO if prediction table - validate what is inserted, type and prevent the creation of new columns
+  // (potentially highlight what is failing validation in red and display what the problem is upon hover)
+  // training table may not be valid and the user may just want to predict with their model
+  // which will only allow validation when an error is thrown, catch that error and display
+  const updateCellsTextBasedOnCSV = (target: HTMLElement, CSV: CSV) => {
+    const [targetCellRowIndex, targetCellColumnIndex] = getCellPosition(target.className);
+    CSV.forEach((row: string[], rowIndex: number) => {
+      row.forEach((cellText: string, columnIndex: number) => {
+        tableContents.current[targetCellRowIndex + rowIndex][targetCellColumnIndex + columnIndex] = cellText;
+        fireCellUpdated(rowIndex, columnIndex, cellText);
+      });
+    });
+    fireTableUpdated();
+    forceRerender(!rerenderState);
+  };
+
+  // TO-DO test with other hardware and software
+  const updateCellsOnPaste = (event: React.ClipboardEvent<HTMLDivElement>) => {
+    const clipboardText = JSON.stringify(event.clipboardData.getData('text/plain'));
+    if (clipboardText.indexOf('\\n') > -1 || clipboardText.indexOf('\\t') > -1) {
+      event.preventDefault();
+      const CSV = ParseCSVClipboardText.parse(clipboardText);
+      updateCellsTextBasedOnCSV(event.target as HTMLElement, CSV);
+    } else {
+      updateCellText(event.target as HTMLElement);
+    }
+    return false;
   };
 
   const generateCells = (dataRow: TableRow, rowIndex: number, isHeader = false) => {
@@ -44,7 +92,8 @@ export default function Table(props: Props) {
           className={`row-${rowIndex}-column-${columnIndex} cell`}
           key={columnIndex}
           contentEditable={isContentEditable}
-          onInput={updateCell}
+          onInput={updateCellOnInput}
+          onPaste={updateCellsOnPaste}
           suppressContentEditableWarning={true}
         >
           {cellName}
