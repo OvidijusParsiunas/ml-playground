@@ -109,6 +109,7 @@ export default function StatefulTable(props: Props) {
       return (
         <Table
           headers={predictHeaders?.map((header) => header.text)}
+          defaultValue={'-'}
           initialContent={initialTableContents.current}
           cellUpdated={updateTableCellStore}
           areHeadersEditable={areHeadersEditable}

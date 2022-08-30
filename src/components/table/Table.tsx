@@ -6,17 +6,21 @@ import './table.css';
 
 interface Props {
   headers?: string[];
+  defaultValue?: string;
   areHeadersEditable?: boolean;
   initialContent: TableContents;
   tableUpdated?: (table: TableContents) => void;
   cellUpdated?: (rowIndex: number, columnIndex: number, newText: string) => void;
 }
 
+// TO-DO Column names cannot be the same
 export default function Table(props: Props) {
-  const { headers, initialContent, areHeadersEditable, tableUpdated, cellUpdated } = props;
+  const { headers, defaultValue, initialContent, areHeadersEditable, tableUpdated, cellUpdated } = props;
 
   const tableContents = React.useRef<TableContents>(JSON.parse(JSON.stringify(initialContent)));
   const [rerenderState, forceRerender] = useState<boolean>(false);
+
+  const defaultValueClassName = 'default-value';
 
   const getCellPosition = (className: string) => {
     const digitsRegex = /\d+/g;
@@ -40,7 +44,7 @@ export default function Table(props: Props) {
 
   const addNewRow = () => {
     const numberOfColumns = tableContents.current[0].length;
-    const newRow = new Array(numberOfColumns).fill('-');
+    const newRow = new Array(numberOfColumns).fill(defaultValue);
     tableContents.current.push(newRow);
     newRow.forEach((cellText: string, columnIndex: number) => {
       fireCellUpdated(tableContents.current.length - 1, columnIndex, cellText as string);
@@ -70,7 +74,7 @@ export default function Table(props: Props) {
   // (potentially highlight what is failing validation in red and display what the problem is upon hover)
   // training table may not be valid and the user may just want to predict with their model
   // which will only allow validation when an error is thrown, catch that error and display
-  const updateCellsTextBasedOnCSV = (target: HTMLElement, CSV: CSV) => {
+  const updateCellsTextUsingCSV = (target: HTMLElement, CSV: CSV) => {
     const [targetCellRowIndex, targetCellColumnIndex] = getCellPosition(target.className);
     CSV.forEach((row: string[], rowIndex: number) => {
       row.forEach((cellText: string, columnIndex: number) => {
@@ -88,26 +92,50 @@ export default function Table(props: Props) {
     if (clipboardText.indexOf('\\n') > -1 || clipboardText.indexOf('\\t') > -1) {
       event.preventDefault();
       const CSV = ParseCSVClipboardText.parse(clipboardText);
-      updateCellsTextBasedOnCSV(event.target as HTMLElement, CSV);
+      updateCellsTextUsingCSV(event.target as HTMLElement, CSV);
     } else {
       updateCellText(event.target as HTMLElement);
     }
     return false;
   };
 
+  const updateCellTextUsingSpecificValue = (target: HTMLElement, newValue: string) => {
+    target.textContent = newValue;
+    updateCellText(target);
+  };
+
+  const manageDefaultValue = (targetElement: HTMLElement, defaultValue: string) => {
+    if (targetElement.textContent?.trim() === '') {
+      updateCellTextUsingSpecificValue(targetElement, defaultValue);
+    } else if (
+      targetElement.className.indexOf(defaultValueClassName) > -1 &&
+      targetElement.textContent?.trim() !== defaultValue
+    ) {
+      forceRerender(!rerenderState);
+    }
+  };
+
+  const onCellBlur = (event: React.FocusEvent<HTMLDivElement>) => {
+    const targetElement = event.target as HTMLElement;
+    if (defaultValue) manageDefaultValue(targetElement, defaultValue);
+  };
+
   const generateCells = (dataRow: TableRow, rowIndex: number, isHeader = false) => {
     const isContentEditable = isHeader ? areHeadersEditable : true;
-    return dataRow.map((cellName: string, columnIndex: number) => {
+    return dataRow.map((cellText: string, columnIndex: number) => {
+      const isDefaultValue = typeof defaultValue !== 'undefined' && cellText === defaultValue;
       return (
         <div
-          className={`row-${rowIndex}-column-${columnIndex} cell`}
+          className={`row-${rowIndex}-column-${columnIndex} cell ${isDefaultValue ? defaultValueClassName : ''}`}
           key={columnIndex}
           contentEditable={isContentEditable}
           onInput={updateCellOnInput}
           onPaste={updateCellsOnPaste}
+          onMouseDown={(e) => (isDefaultValue ? updateCellTextUsingSpecificValue(e.target as HTMLElement, '') : {})}
+          onBlur={(e) => onCellBlur(e)}
           suppressContentEditableWarning={true}
         >
-          {cellName}
+          {cellText}
         </div>
       );
     });
