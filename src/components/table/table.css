@@ -15,27 +15,37 @@
   border-bottom-style: solid;
   border-bottom-width: 1px;
   border-bottom-color: rgba(0, 0, 0, 0.12);
-  min-height: 48px;
 }
 
-#data > div:last-child {
-  border-bottom-width: 0px;
+.row > div:first-child {
+  padding-left: 16px;
+  width: 106px;
 }
 
 .cell {
-  display: flex;
-  min-width: 100px;
-  align-items: center;
-  padding-left: 16px;
-  padding-right: 16px;
+  text-align: left;
+  padding: 6px;
+  padding-top: 11px;
+  min-height: 46px;
   box-sizing: border-box;
-  /* the line height needs to fill the cell in order to prevent mouse click above text to default the editable
-     content cursor to the start of the text in situations where it should be placed at the end */
-  line-height: 48px;
   outline: none;
+  width: 100px;
+  overflow-wrap: anywhere;
 }
 
 /* check if this is a good workaround for smaller devices */
 .cell:empty {
   text-align: left;
+}
+
+.add-new-row-row:hover {
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
+
+.add-new-row-cell {
+  padding-top: 8px;
+  min-height: 38px;
+  font-size: 12px;
+  color: #555555;
 }

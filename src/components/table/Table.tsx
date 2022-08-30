@@ -38,6 +38,17 @@ export default function Table(props: Props) {
     }
   };
 
+  const addNewRow = () => {
+    const numberOfColumns = tableContents.current[0].length;
+    const newRow = new Array(numberOfColumns).fill('-');
+    tableContents.current.push(newRow);
+    newRow.forEach((cellText: string, columnIndex: number) => {
+      fireCellUpdated(tableContents.current.length - 1, columnIndex, cellText as string);
+    });
+    fireTableUpdated();
+    forceRerender(!rerenderState);
+  };
+
   const updateCellText = (target: HTMLElement) => {
     const { className, textContent: cellText } = target;
     const [rowIndex, columnIndex] = getCellPosition(className);
@@ -119,6 +130,11 @@ export default function Table(props: Props) {
       {/* headers from parent state or this component */}
       <div id="header">{populateDataRow(headers || tableContents.current[0], 0, true)}</div>
       <div id="data">{populateData(tableContents.current.slice(1))}</div>
+      <div id="add-row">
+        <div className="add-new-row-row row" onClick={addNewRow}>
+          <div className="add-new-row-cell cell">+ New</div>
+        </div>
+      </div>
     </div>
   );
 }

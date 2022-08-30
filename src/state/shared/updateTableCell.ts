@@ -5,7 +5,9 @@ export class UpdateTableCell {
   // prettier-ignore
   public static getUpdatedRowWithNewText(
       rowIndex: number, columnIndex: number, newText: string, currentState: JSONTableData): JSONTableData {
-    const row = JSON.parse(JSON.stringify(currentState[rowIndex - 1]));
+    // if new row - create an empty array
+    const row = Object.keys(currentState).length - 1 < rowIndex - 1
+      ? [] : JSON.parse(JSON.stringify(currentState[rowIndex - 1]));
     row[columnIndex] = newText;
     return { [rowIndex - 1]: row };
   }
