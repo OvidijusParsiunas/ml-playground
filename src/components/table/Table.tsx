@@ -128,12 +128,10 @@ export default function Table(props: Props) {
   return (
     <div>
       {/* headers from parent state or this component */}
-      <div id="header">{populateDataRow(headers || tableContents.current[0], 0, true)}</div>
-      <div id="data">{populateData(tableContents.current.slice(1))}</div>
-      <div id="add-row">
-        <div className="add-new-row-row row" onClick={addNewRow}>
-          <div className="add-new-row-cell cell">+ New</div>
-        </div>
+      <div className="header">{populateDataRow(headers || tableContents.current[0], 0, true)}</div>
+      <div className="data">{populateData(tableContents.current.slice(1))}</div>
+      <div className="add-new-row-row row" onClick={addNewRow}>
+        <div className="add-new-row-cell cell">+ New</div>
       </div>
     </div>
   );
