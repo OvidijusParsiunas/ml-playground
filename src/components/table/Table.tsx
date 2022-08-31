@@ -1,9 +1,12 @@
 import { TableContents, TableRow } from '../../shared/types/tableContents';
 import { ParseCSVClipboardText } from './parseCSVClipboardText';
+import React, { useEffect, useState } from 'react';
 import { CSV } from '../../shared/types/CSV';
-import React, { useState } from 'react';
 import './table.css';
 
+// TO-DO
+// API needs to provide the ability to style borders
+// allow duplicate headers, if not, how to default
 interface Props {
   headers?: string[];
   defaultValue?: string;
@@ -16,11 +19,42 @@ interface Props {
 // TO-DO Column names cannot be the same
 export default function Table(props: Props) {
   const { headers, defaultValue, initialContent, areHeadersEditable, tableUpdated, cellUpdated } = props;
+  const defaultValueClassName = 'default-value';
+  const defaultColumnWidth = '100px';
 
   const tableContents = React.useRef<TableContents>(JSON.parse(JSON.stringify(initialContent)));
   const [rerenderState, forceRerender] = useState<boolean>(false);
+  // can use typescript template inferance
+  const headerState = React.useRef<{ width: string; text: string }[]>([]);
 
-  const defaultValueClassName = 'default-value';
+  const getNumberOfIdenticalHeaderText = (targetHeaderText: string, arraySearchEndIndex?: number) => {
+    const endIndex = arraySearchEndIndex === undefined ? headerState.current.length : arraySearchEndIndex;
+    return headerState.current.slice(0, endIndex).filter((headerCell) => headerCell.text === targetHeaderText).length;
+  };
+
+  const setHeaderState = () => {
+    let isHeaderTextUpdated = false;
+    initialContent[0].forEach((headerText: string, index: number) => {
+      let newText = headerText;
+      if (getNumberOfIdenticalHeaderText(headerText, index) > 0) {
+        newText = defaultValue || '';
+        tableContents.current[0][index] = newText;
+        fireCellUpdated(0, index, defaultValue as string);
+        isHeaderTextUpdated = true;
+      }
+      headerState.current.push({ text: newText, width: defaultColumnWidth });
+    });
+    return isHeaderTextUpdated;
+  };
+
+  useEffect(() => {
+    fireTableUpdated();
+    const isHeaderTextUpdated = setHeaderState();
+    if (isHeaderTextUpdated) {
+      fireTableUpdated();
+      forceRerender(!rerenderState);
+    }
+  }, [initialContent]);
 
   const getCellPosition = (className: string) => {
     const digitsRegex = /\d+/g;
@@ -54,10 +88,12 @@ export default function Table(props: Props) {
   };
 
   const updateCellText = (target: HTMLElement) => {
-    const { className, textContent: cellText } = target;
+    const { className, textContent } = target;
+    const cellText = textContent as string;
     const [rowIndex, columnIndex] = getCellPosition(className);
-    tableContents.current[rowIndex][columnIndex] = cellText as string;
-    fireCellUpdated(rowIndex, columnIndex, cellText as string);
+    if (rowIndex === 0) headerState.current[columnIndex].text = cellText;
+    tableContents.current[rowIndex][columnIndex] = cellText;
+    fireCellUpdated(rowIndex, columnIndex, cellText);
     fireTableUpdated();
   };
 
@@ -78,8 +114,18 @@ export default function Table(props: Props) {
     const [targetCellRowIndex, targetCellColumnIndex] = getCellPosition(target.className);
     CSV.forEach((row: string[], rowIndex: number) => {
       row.forEach((cellText: string, columnIndex: number) => {
-        tableContents.current[targetCellRowIndex + rowIndex][targetCellColumnIndex + columnIndex] = cellText;
-        fireCellUpdated(rowIndex, columnIndex, cellText);
+        const updatedRow = targetCellRowIndex + rowIndex;
+        const updatedColumn = targetCellColumnIndex + columnIndex;
+        let newText = cellText;
+        if (updatedRow === 0) {
+          if (getNumberOfIdenticalHeaderText(cellText) > 0) {
+            newText = defaultValue || '';
+            target.textContent = newText;
+          }
+          headerState.current[updatedColumn].text = newText;
+        }
+        tableContents.current[updatedRow][updatedColumn] = newText;
+        fireCellUpdated(updatedRow, updatedColumn, newText);
       });
     });
     fireTableUpdated();
@@ -115,9 +161,23 @@ export default function Table(props: Props) {
     }
   };
 
+  const defaultHeaderOnBlurIfDuplicate = (targetElement: HTMLElement) => {
+    const { className, textContent: cellText } = targetElement;
+    const [rowIndex, columnIndex] = getCellPosition(className);
+    if (rowIndex === 0 && getNumberOfIdenticalHeaderText(cellText as string) > 1) {
+      const newText = defaultValue || '';
+      headerState.current[columnIndex].text = newText;
+      tableContents.current[rowIndex][columnIndex] = newText;
+      targetElement.textContent = newText;
+      fireCellUpdated(rowIndex, columnIndex, newText);
+      fireTableUpdated();
+    }
+  };
+
   const onCellBlur = (event: React.FocusEvent<HTMLDivElement>) => {
     const targetElement = event.target as HTMLElement;
     if (defaultValue) manageDefaultValue(targetElement, defaultValue);
+    defaultHeaderOnBlurIfDuplicate(event.target);
   };
 
   const generateCells = (dataRow: TableRow, rowIndex: number, isHeader = false) => {
